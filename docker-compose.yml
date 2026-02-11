@@ -8,9 +8,9 @@ services:
     ports:
       - "5173:5173"                     # Vite default dev server port
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=develop
     working_dir: /app
-    command: ["sh", "-c", "npm install --legacy-peer-deps && npm run dev -- --host 0.0.0.0"]
+    command: ["sh", "-c", "npm install --legacy-peer-deps && npm run build &&  npm run preview -- --host 0.0.0.0"]
     # If using yarn: "yarn install && yarn dev --host 0.0.0.0"
     depends_on:
       - games-browser-backend
@@ -19,14 +19,8 @@ services:
     image: node:22-alpine
     volumes:
       - ./backend:/app
-      # Mount your real GAMES folder – adjust path!
-      # Use File Manager → right-click your GAMES folder → Properties → see Location
-      # Common examples on UGREEN NAS:
-      # - /volume1/GAMES:/games:ro
-      # - /volume2/media/games:/games:ro
-      # - /mnt/Storage/GAMES:/games:ro
       - /volume1/Downloads/GAMES:/games:ro
-#      - /Users/artem/GAMES:/games:ro
+#      - /Users/artem/GAMES:/games:ro # Local on PC
     ports:
       - "3001:3001"                     # backend API
     environment:
