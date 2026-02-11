@@ -1,4 +1,3 @@
-// backend/src/igdb.ts
 import axios from 'axios';
 import dotenv from 'dotenv';
 
@@ -13,6 +12,19 @@ if (!CLIENT_ID || !CLIENT_SECRET) {
 
 let accessToken: string | null = null;
 let tokenExpiry: number = 0;
+
+const PLATFORM_TO_IGDB_ID: Record<string, number> = {
+    'PS': 7,
+    'PS 2': 8,
+    'PS 3': 9,
+    'PSP': 38,
+    'PS Vita': 46,
+    'Xbox': 11,
+    'Xbox 360': 12,
+    'Win': 6,
+    'Mac': 14,
+}
+
 
 async function getAccessToken(): Promise<string> {
     if (accessToken && Date.now() < tokenExpiry) return accessToken;
@@ -43,15 +55,17 @@ async function getAccessToken(): Promise<string> {
     }
 }
 
-export async function searchGame(query: string): Promise<any | null> {
+export async function searchGame(query: string, platform: string): Promise<any | null> {
     if (!CLIENT_ID || !CLIENT_SECRET) return null;
 
     const token = await getAccessToken();
+    const platformID = PLATFORM_TO_IGDB_ID[platform];
+
 
     try {
         const res = await axios.post(
             'https://api.igdb.com/v4/games',
-            `search "${query}"; fields id,name,summary,release_dates.human,cover.image_id,genres.name,platforms.name; limit 5;`,
+            `search "${query}"; fields id,name,summary,release_dates.human,cover.image_id,genres.name,platforms.name; where platforms = (${platformID}); limit 5;`,
             {
                 headers: {
                     'Client-ID': CLIENT_ID!,
@@ -62,7 +76,7 @@ export async function searchGame(query: string): Promise<any | null> {
         );
 
         if (res.data.length === 0) {
-            console.log(`No IGDB match for "${query}"`);
+            console.log(`No IGDB match for "${query}" and platform "${platform}"`);
             return null;
         }
 

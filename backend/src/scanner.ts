@@ -1,4 +1,3 @@
-// backend/src/scanner.ts
 import fs from 'fs-extra';
 import path from 'path';
 import { insertGame } from './db';
@@ -42,9 +41,9 @@ export const scanGames = async () => {
                 }
 
                 // Clean folder name for IGDB search (remove underscores, regions, etc.)
-                let searchQuery = gameFolder.replace(/[_-]/g, ' ').replace(/\s*\(.*\)\s*/g, '').trim();
+                const searchQuery = gameFolder.replace(/[_-]/g, ' ').replace(/\s*\(.*\)\s*/g, '').trim();
 
-                const igdbData = await searchGame(searchQuery);
+                const igdbData = await searchGame(searchQuery, platform);
 
                 const displayName = igdbData?.name || `${platform} — ${gameFolder}`;
                 const thumbnail = igdbData?.thumbnail || (hasLocalFiles[0] ? localThumbnail : '');
