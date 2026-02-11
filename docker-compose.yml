@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  games-browser-frontend:
+    image: node:22-alpine
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "5173:5173"                     # Vite default dev server port
+    environment:
+      - NODE_ENV=development
+    working_dir: /app
+    command: ["sh", "-c", "npm install --legacy-peer-deps && npm run dev -- --host 0.0.0.0"]
+    # If using yarn: "yarn install && yarn dev --host 0.0.0.0"
+    depends_on:
+      - games-browser-backend
+
+  games-browser-backend:
+    image: node:22-alpine
+    volumes:
+      - ./backend:/app
+      # Mount your real GAMES folder – adjust path!
+      # Use File Manager → right-click your GAMES folder → Properties → see Location
+      # Common examples on UGREEN NAS:
+      # - /volume1/GAMES:/games:ro
+      # - /volume2/media/games:/games:ro
+      # - /mnt/Storage/GAMES:/games:ro
+#      - /volume1/GAMES:/games:ro
+      - /Users/artem/GAMES:/games:ro
+    ports:
+      - "3001:3001"                     # backend API
+    environment:
+      - NODE_ENV=development             # or production if you prefer
+      - IGDB_CLIENT_ID=uwpk0bhhb1k2uye1rq629i9z54qm4e
+      - IGDB_CLIENT_SECRET=0nvokich4x2qsp5djh5yi153k67ago
+    working_dir: /app
+    command: ["sh", "-c", "npm install && npm run build && npm run start"]
+    # If you have "dev": "ts-node src/index.ts" or similar in package.json
+    # For production mode: "npm start" after building

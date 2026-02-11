@@ -1,0 +1,40 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background subtle gradient (optional – remove if you want pure flat) -->
+    <defs>
+        <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#2a2a3a"/>
+            <stop offset="100%" stop-color="#1a1a28"/>
+        </linearGradient>
+    </defs>
+    <rect width="128" height="128" rx="24" fill="url(#grad)"/>
+
+    <!-- Bookshelf / library base -->
+    <rect x="24" y="64" width="80" height="48" rx="6" fill="#3b82f6" opacity="0.9"/>
+    <rect x="28" y="68" width="72" height="40" rx="4" fill="#1e40af"/>
+
+    <!-- Gamepad / controller in front -->
+    <g transform="translate(40,28)">
+        <!-- Main body -->
+        <rect x="0" y="0" width="48" height="32" rx="16" fill="#4b5563"/>
+        <!-- Left grip -->
+        <ellipse cx="12" cy="16" rx="12" ry="14" fill="#374151"/>
+        <!-- Right grip -->
+        <ellipse cx="36" cy="16" rx="12" ry="14" fill="#374151"/>
+        <!-- D-pad -->
+        <rect x="4" y="10" width="16" height="12" rx="2" fill="#111827"/>
+        <rect x="8" y="6" width="8" height="20" rx="2" fill="#111827"/>
+        <!-- Buttons (A B X Y style) -->
+        <circle cx="36" cy="10" r="5" fill="#ef4444"/> <!-- red -->
+        <circle cx="42" cy="16" r="5" fill="#3b82f6"/> <!-- blue -->
+        <circle cx="36" cy="22" r="5" fill="#22c55e"/> <!-- green -->
+        <circle cx="30" cy="16" r="5" fill="#eab308"/> <!-- yellow -->
+    </g>
+
+    <!-- Small highlight / shine on controller -->
+    <ellipse cx="68" cy="42" rx="8" ry="6" fill="white" opacity="0.15"/>
+
+    <!-- Optional text: "Games" (uncomment if you want wordmark) -->
+    <!--
+    <text x="64" y="110" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="white" text-anchor="middle">Games</text>
+    -->
+</svg>
