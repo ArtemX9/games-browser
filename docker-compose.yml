@@ -25,8 +25,8 @@ services:
       # - /volume1/GAMES:/games:ro
       # - /volume2/media/games:/games:ro
       # - /mnt/Storage/GAMES:/games:ro
-#      - /volume1/GAMES:/games:ro
-      - /Users/artem/GAMES:/games:ro
+      - /volume1/Downloads/GAMES:/games:ro
+#      - /Users/artem/GAMES:/games:ro
     ports:
       - "3001:3001"                     # backend API
     environment:
