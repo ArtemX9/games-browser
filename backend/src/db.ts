@@ -40,6 +40,15 @@ export const insertGame = (
     );
 };
 
+export const clearGames = (): Promise<void> => {
+    return new Promise((resolve, reject) => {
+        db.run('DELETE FROM games', (err) => {
+            if (err) reject(err);
+            else resolve();
+        });
+    });
+};
+
 export const getAllGames = (): Promise<any[]> => {
     return new Promise((resolve, reject) => {
         db.all('SELECT * FROM games ORDER BY platform, display_name', (err, rows) => {
