@@ -19,8 +19,8 @@ services:
     image: node:22-alpine
     volumes:
       - ./backend:/app
-      - /volume1/Downloads/GAMES:/games:ro
-#      - /Users/artem/GAMES:/games:ro # Local on PC
+#      - /volume1/Downloads/GAMES:/games:ro
+      - /Users/artem/GAMES:/games:ro # Local on PC
     ports:
       - "3001:3001"                     # backend API
     environment:

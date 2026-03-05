@@ -7,7 +7,11 @@ import { IApplicationState } from './reducers';
 
 export type AppDispatch = ThunkDispatch<IApplicationState, any, AnyAction>;
 export type TypedDispatch = ThunkDispatch<IApplicationState, any, AnyAction>;
-export type Action = (dispatch: AppDispatch, getState: () => IApplicationState) => void;
+export type Action = (
+  dispatch: AppDispatch,
+  getState: () => IApplicationState,
+) => void;
 
 export const useAppDispatch = () => useDispatch<TypedDispatch>();
-export const useAppSelector: TypedUseSelectorHook<IApplicationState> = createSelectorHook<IApplicationState>();
+export const useAppSelector: TypedUseSelectorHook<IApplicationState> =
+  createSelectorHook<IApplicationState>();
