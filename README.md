@@ -1,5 +1,8 @@
 # Games Browser
 
+![Node.js](https://img.shields.io/badge/Node.js-22-339933?logo=node.js&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
+
 A self-hosted web app for browsing a local game library. It scans a `/games` directory, enriches metadata from [IGDB](https://www.igdb.com/), stores results in SQLite, and serves a React frontend that groups games by platform with cover art, descriptions, and download support.
 
 Designed to run on a NAS (tested on UGREEN NASync DXP4800 PLUS).
