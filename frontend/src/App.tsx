@@ -1,10 +1,14 @@
-import { GamesSidebar } from '@/components/GamesSidebar/GamesSidebar';
 import { GameCard } from '@/components/GameCard/GameCard';
+import { GamesSidebar } from '@/components/GamesSidebar/GamesSidebar';
 import { ModeToggle } from '@/components/ThemeProvider/ModeToggle';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from '@/components/ui/sidebar';
 import { Skeleton } from '@/components/ui/skeleton';
-import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { Game } from '@/store/reducers/games/types';
 
 interface IApp {

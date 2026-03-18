@@ -31,7 +31,7 @@ export const fetchGamesList =
       }),
     );
     try {
-      const gamesList: GameIncoming[] = await api.fetchGamesList();
+      const gamesList = (await api.fetchGamesList()) as GameIncoming[];
       dispatch(
         gamesLoadSuccess({
           games: gamesList.map((game) => ({
@@ -44,7 +44,7 @@ export const fetchGamesList =
           })),
         }),
       );
-    } catch (e: any) {
-      dispatch(gamesLoadFailure({ error: e.toString() }));
+    } catch (e: unknown) {
+      dispatch(gamesLoadFailure({ error: String(e) }));
     }
   };

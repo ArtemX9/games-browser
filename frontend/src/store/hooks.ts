@@ -5,8 +5,12 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { IApplicationState } from './reducers';
 
-export type AppDispatch = ThunkDispatch<IApplicationState, any, AnyAction>;
-export type TypedDispatch = ThunkDispatch<IApplicationState, any, AnyAction>;
+export type AppDispatch = ThunkDispatch<IApplicationState, unknown, AnyAction>;
+export type TypedDispatch = ThunkDispatch<
+  IApplicationState,
+  unknown,
+  AnyAction
+>;
 export type Action = (
   dispatch: AppDispatch,
   getState: () => IApplicationState,

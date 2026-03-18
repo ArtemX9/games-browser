@@ -9,7 +9,10 @@ export const defaultFetchSettings: RequestInit = {
   },
 };
 
-export const getFetchSettings = (method = 'GET', data: any = null) => {
+export const getFetchSettings = (
+  method = 'GET',
+  data: FormData | Record<string, unknown> | null = null,
+) => {
   const settings = {
     ...defaultFetchSettings,
     headers: { ...defaultFetchSettings.headers },
@@ -54,10 +57,10 @@ class ApiException {
 type FetchOptions = RequestInit & {
   withAbortRethrow?: boolean;
 };
-const apiFetch = <T = any>(
+const apiFetch = <T = unknown>(
   url: string,
   method = 'GET',
-  body: any = null,
+  body: FormData | Record<string, unknown> | null = null,
   options: FetchOptions | null = {},
   customSettings: FetchOptions | null = null,
 ) => {
@@ -65,40 +68,43 @@ const apiFetch = <T = any>(
     ? customSettings
     : { ...getFetchSettings(method, body), ...options };
   const startTime = new Date().getTime();
-  return (
-    fetch(url, settings)
-      .then((response) => {
-        const status = response.status;
-        const isJson = response.headers
-          .get('content-type')
-          ?.includes('application/json');
-        if (response.ok && isJson) {
-          return response.json().then((json) => [response, status, json]);
-        }
-        return response.text().then((text) => [response, status, text]);
-      })
-      // @ts-ignore
-      .then(([response, status, value]) => {
-        if (response.ok) {
-          return value as T;
-        }
-        throw new ApiException(response.status, value, url, method);
-      })
-      .catch((error) => {
-        if (options?.withAbortRethrow) {
-          throw error;
-        }
-        if (error.name !== 'AbortError') {
-          const endTime = new Date().getTime();
+  return fetch(url, settings)
+    .then((response) => {
+      const status = response.status;
+      const isJson = response.headers
+        .get('content-type')
+        ?.includes('application/json');
+      if (response.ok && isJson) {
+        return response.json().then((json) => [response, status, json]);
+      }
+      return response.text().then((text) => [response, status, text]);
+    })
+    .then((tuple) => {
+      const [response, , value] = tuple as [Response, number, unknown];
+      if (response.ok) {
+        return value as T;
+      }
+      throw new ApiException(
+        String(response.status),
+        String(value),
+        url,
+        method,
+      );
+    })
+    .catch((error) => {
+      if (options?.withAbortRethrow) {
+        throw error;
+      }
+      if (error.name !== 'AbortError') {
+        const endTime = new Date().getTime();
 
-          console.error(`[API Error][${error}]`, {
-            details: error,
-            duration: endTime - startTime,
-          });
-          return Promise.resolve();
-        }
-      })
-  );
+        console.error(`[API Error][${error}]`, {
+          details: error,
+          duration: endTime - startTime,
+        });
+        return Promise.resolve();
+      }
+    });
 };
 
 export const fetchGamesList = async (signal?: AbortSignal) => {

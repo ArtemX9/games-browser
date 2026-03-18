@@ -1,6 +1,5 @@
-import { useState } from 'react';
-
 import { RotateCwIcon } from 'lucide-react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { triggerRescan } from '@/api/api';
