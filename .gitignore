@@ -147,6 +147,7 @@ Icon
 # Thumbnails
 ._*
 **/games.db
+games.db
 
 # Files that might appear in the root of a volume
 .DocumentRevisions-V100

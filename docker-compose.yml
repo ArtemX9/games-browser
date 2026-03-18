@@ -11,7 +11,6 @@ services:
       - NODE_ENV=develop
     working_dir: /app
     command: ["sh", "-c", "npm install --legacy-peer-deps && npm run build &&  npm run preview -- --host 0.0.0.0"]
-    # If using yarn: "yarn install && yarn dev --host 0.0.0.0"
     depends_on:
       - games-browser-backend
 
@@ -19,15 +18,12 @@ services:
     image: node:22-alpine
     volumes:
       - ./backend:/app
-#      - /volume1/Downloads/GAMES:/games:ro
-      - /Users/artem/GAMES:/games:ro # Local on PC
+      - ${GAMES_PATH}:/games:ro
     ports:
       - "3001:3001"                     # backend API
     environment:
-      - NODE_ENV=development             # or production if you prefer
-      - IGDB_CLIENT_ID=uwpk0bhhb1k2uye1rq629i9z54qm4e
-      - IGDB_CLIENT_SECRET=0nvokich4x2qsp5djh5yi153k67ago
+      - NODE_ENV=development
+      - IGDB_CLIENT_ID=${IGDB_CLIENT_ID}
+      - IGDB_CLIENT_SECRET=${IGDB_CLIENT_SECRET}
     working_dir: /app
     command: ["sh", "-c", "npm install && npm run build && npm run start"]
-    # If you have "dev": "ts-node src/index.ts" or similar in package.json
-    # For production mode: "npm start" after building
