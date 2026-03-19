@@ -24,8 +24,8 @@ export const scanGames = async () => {
                 const iconPath = path.join(gamePath, 'icon.png');
                 const descriptionPath = path.join(gamePath, 'description.txt');
 
-                let localThumbnail = `/media/${platform}/${gameFolder}/thumbnail.png`;
-                let localIcon = `/media/${platform}/${gameFolder}/icon.png`;
+                const localThumbnail = `/media/${platform}/${gameFolder}/thumbnail.png`;
+                const localIcon = `/media/${platform}/${gameFolder}/icon.png`;
                 let localDescription = '';
 
                 const hasLocalFiles = await Promise.all([

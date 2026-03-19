@@ -15,7 +15,7 @@ router.get('/games', async (req, res) => {
     try {
         const games = await getAllGames();
         res.json(games);
-    } catch (err) {
+    } catch (_err) {
         res.status(500).json({ error: 'Failed to fetch games' });
     }
 });

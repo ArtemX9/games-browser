@@ -21,12 +21,16 @@ describe('fetchGamesList thunk', () => {
   it('dispatches GAMES_LOAD_START then GAMES_LOAD_SUCCESS with camelCase fields', async () => {
     vi.spyOn(api, 'fetchGamesList').mockResolvedValue([
       {
+        id: 1,
         display_name: 'Win — Hades',
         thumbnail: '/media/Win/Hades/thumbnail.png',
         icon: '',
         description: 'A rogue-like dungeon crawler.',
         platform: 'Win',
         game_folder: 'Hades',
+        release_date: '2020',
+        genres: 'Action',
+        igdb_platforms: 'PC (Microsoft Windows)',
       },
     ]);
 
@@ -50,12 +54,16 @@ describe('fetchGamesList thunk', () => {
   it('converts snake_case fields to camelCase for all games', async () => {
     vi.spyOn(api, 'fetchGamesList').mockResolvedValue([
       {
+        id: 2,
         display_name: 'PS 2 — Shadow of the Colossus',
         thumbnail: '/media/PS 2/Shadow of the Colossus/thumbnail.png',
         icon: 'icon.png',
         description: 'An action-adventure game.',
         platform: 'PS 2',
         game_folder: 'Shadow of the Colossus',
+        release_date: '2005',
+        genres: 'Action, Adventure',
+        igdb_platforms: 'PlayStation 2',
       },
     ]);
 

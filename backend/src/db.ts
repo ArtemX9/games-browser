@@ -1,6 +1,7 @@
 // backend/src/db.ts
-import sqlite3 from 'sqlite3';
 import { Database } from 'sqlite3';
+
+import { Game } from './types';
 
 const db = new Database('/app/games.db');
 
@@ -49,11 +50,11 @@ export const clearGames = (): Promise<void> => {
     });
 };
 
-export const getAllGames = (): Promise<any[]> => {
+export const getAllGames = (): Promise<Game[]> => {
     return new Promise((resolve, reject) => {
         db.all('SELECT * FROM games ORDER BY platform, display_name', (err, rows) => {
             if (err) reject(err);
-            else resolve(rows);
+            else resolve(rows as Game[]);
         });
     });
 };

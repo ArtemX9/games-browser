@@ -1,4 +1,5 @@
 import * as api from '@/api/api';
+import { ApiGame } from '@/api/types';
 
 import {
   gamesLoadFailure,
@@ -6,15 +7,6 @@ import {
   gamesLoadSuccess,
 } from '../actions/games';
 import { Action } from '../hooks';
-
-type GameIncoming = {
-  display_name: string;
-  thumbnail: string;
-  icon: string;
-  description: string;
-  platform: string;
-  game_folder: string;
-};
 
 interface IFetchGames {
   offset: number;
@@ -31,7 +23,7 @@ export const fetchGamesList =
       }),
     );
     try {
-      const gamesList = (await api.fetchGamesList()) as GameIncoming[];
+      const gamesList = (await api.fetchGamesList()) as ApiGame[];
       dispatch(
         gamesLoadSuccess({
           games: gamesList.map((game) => ({

@@ -31,7 +31,7 @@ function AppContainer() {
         offset: 0,
       }),
     );
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps -- dispatch is stable
 
   return (
     <App

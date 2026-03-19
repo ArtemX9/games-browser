@@ -1,6 +1,8 @@
 import axios from 'axios';
 import dotenv from 'dotenv';
 
+import { IgdbGameData } from './types';
+
 dotenv.config({ path: '/app/.env' }); // Load from container root if mounted
 
 const CLIENT_ID = process.env.IGDB_CLIENT_ID;
@@ -55,7 +57,7 @@ async function getAccessToken(): Promise<string> {
     }
 }
 
-export async function searchGame(query: string, platform: string): Promise<any | null> {
+export async function searchGame(query: string, platform: string): Promise<IgdbGameData | null> {
     if (!CLIENT_ID || !CLIENT_SECRET) return null;
 
     const token = await getAccessToken();
@@ -92,8 +94,8 @@ export async function searchGame(query: string, platform: string): Promise<any |
             description: game.summary || 'No description available.',
             thumbnail,
             releaseDate: game.release_dates?.[0]?.human || '',
-            genres: game.genres?.map((g: any) => g.name).join(', ') || '',
-            platforms: game.platforms?.map((p: any) => p.name).join(', ') || '',
+            genres: game.genres?.map((g: { name: string }) => g.name).join(', ') || '',
+            platforms: game.platforms?.map((p: { name: string }) => p.name).join(', ') || '',
         };
     } catch (err) {
         console.error(`IGDB search error for "${query}":`, err);
