@@ -3,6 +3,7 @@ import { Game } from '@/store/reducers/games/types';
 export const GAMES_LOAD_START = 'GAMES_LOAD_START';
 export const GAMES_LOAD_SUCCESS = 'GAMES_LOAD_SUCCESS';
 export const GAMES_LOAD_FAILURE = 'GAMES_LOAD_FAILURE';
+export const GAME_UPDATE_SUCCESS = 'GAME_UPDATE_SUCCESS';
 
 interface IGamesLoadStart {
   offset: number;
@@ -37,4 +38,23 @@ export const gamesLoadFailure = ({ error }: IGamesLoadFailure) => ({
   payload: {
     error,
   },
+});
+
+interface IGameUpdateSuccess {
+  gameFolder: string;
+  platform: string;
+  displayName: string;
+  thumbnail: string;
+  description: string;
+}
+
+export const gameUpdateSuccess = ({
+  gameFolder,
+  platform,
+  displayName,
+  thumbnail,
+  description,
+}: IGameUpdateSuccess) => ({
+  type: GAME_UPDATE_SUCCESS,
+  payload: { gameFolder, platform, displayName, thumbnail, description },
 });

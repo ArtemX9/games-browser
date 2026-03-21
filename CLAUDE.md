@@ -112,6 +112,7 @@ Frontend uses `@/*` → `./src/*`. Always use this alias for imports inside `src
 ### UI Components
 - `src/components/ui/` contains **shadcn/ui generated components** — do not manually edit these; regenerate via shadcn CLI instead
 - Use `lucide-react` for icons (already installed)
+- Use `Shadcn` components library  
 - Use `sonner` for toast notifications (already installed)
 
 ## Gotchas

@@ -1,4 +1,5 @@
-import { getGamesURL, getRescanURL } from '@/api/routes';
+import { getGamesURL, getIgdbSearchURL, getRescanURL, getUpdateGameURL } from '@/api/routes';
+import { IgdbSearchResult } from '@/api/types';
 
 export const defaultFetchSettings: RequestInit = {
   method: 'GET',
@@ -118,4 +119,25 @@ export const fetchGamesList = async (signal?: AbortSignal) => {
 export const triggerRescan = async () => {
   const url = getRescanURL();
   return await apiFetch(url, 'GET');
+};
+
+export const searchIgdb = async (query: string, platform: string) => {
+  const url = getIgdbSearchURL(query, platform);
+  return await apiFetch<IgdbSearchResult[]>(url, 'GET');
+};
+
+export const updateGame = async (
+  platform: string,
+  gameFolder: string,
+  data: {
+    displayName: string;
+    thumbnail: string;
+    description: string;
+    releaseDate: string;
+    genres: string;
+    igdbPlatforms: string;
+  },
+) => {
+  const url = getUpdateGameURL(platform, gameFolder);
+  return await apiFetch(url, 'PATCH', data as unknown as Record<string, unknown>);
 };

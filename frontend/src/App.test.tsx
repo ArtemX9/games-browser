@@ -34,6 +34,7 @@ function renderApp(props: {
 }
 
 const makeGame = (platform: string, name: string, gameFolder = name): Game => ({
+  id: 1,
   displayName: name,
   thumbnail: '',
   icon: '',

@@ -4,7 +4,8 @@ import archiver from 'archiver';
 import { Router } from 'express';
 import fs from 'fs-extra';
 
-import { clearGames, getAllGames } from '../db';
+import { clearGames, getAllGames, updateGame } from '../db';
+import { searchGames } from '../igdb';
 import { scanGames } from '../scanner';
 
 const GAMES_ROOT = '/games';
@@ -24,6 +25,34 @@ router.get('/rescan', async (req, res) => {
     await clearGames();
     await scanGames();
     res.json({ status: 'Rescan completed' });
+});
+
+router.get('/igdb-search', async (req, res) => {
+    const { query, platform } = req.query as { query: string; platform: string };
+    if (!query || !platform) {
+        res.status(400).json({ error: 'query and platform are required' });
+        return;
+    }
+    const results = await searchGames(query, platform);
+    res.json(results);
+});
+
+router.patch('/games/:platform/:gameFolder', async (req, res) => {
+    const { platform, gameFolder } = req.params;
+    const { displayName, thumbnail, description, releaseDate, genres, igdbPlatforms } = req.body as {
+        displayName: string;
+        thumbnail: string;
+        description: string;
+        releaseDate: string;
+        genres: string;
+        igdbPlatforms: string;
+    };
+    try {
+        await updateGame(gameFolder, platform, displayName, thumbnail, description, releaseDate, genres, igdbPlatforms);
+        res.json({ status: 'ok' });
+    } catch (_err) {
+        res.status(500).json({ error: 'Failed to update game' });
+    }
 });
 
 router.get('/download/:platform/:gameFolder', async (req, res) => {

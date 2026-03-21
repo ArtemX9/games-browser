@@ -41,6 +41,29 @@ export const insertGame = (
     );
 };
 
+export const updateGame = (
+    gameFolder: string,
+    platform: string,
+    displayName: string,
+    thumbnail: string,
+    description: string,
+    releaseDate: string,
+    genres: string,
+    igdbPlatforms: string
+): Promise<void> => {
+    return new Promise((resolve, reject) => {
+        db.run(
+            `UPDATE games SET display_name=?, thumbnail=?, description=?, release_date=?, genres=?, igdb_platforms=?
+             WHERE game_folder=? AND platform=?`,
+            [displayName, thumbnail, description, releaseDate, genres, igdbPlatforms, gameFolder, platform],
+            (err) => {
+                if (err) reject(err);
+                else resolve();
+            }
+        );
+    });
+};
+
 export const clearGames = (): Promise<void> => {
     return new Promise((resolve, reject) => {
         db.run('DELETE FROM games', (err) => {

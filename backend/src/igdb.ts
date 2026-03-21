@@ -57,6 +57,47 @@ async function getAccessToken(): Promise<string> {
     }
 }
 
+function mapGameData(game: { name: string; summary?: string; cover?: { image_id: string }; release_dates?: { human: string }[]; genres?: { name: string }[]; platforms?: { name: string }[] }): IgdbGameData {
+    const thumbnail = game.cover?.image_id
+        ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${game.cover.image_id}.jpg`
+        : null;
+    return {
+        name: game.name,
+        description: game.summary || 'No description available.',
+        thumbnail,
+        releaseDate: game.release_dates?.[0]?.human || '',
+        genres: game.genres?.map((g) => g.name).join(', ') || '',
+        platforms: game.platforms?.map((p) => p.name).join(', ') || '',
+    };
+}
+
+export async function searchGames(query: string, platform: string): Promise<IgdbGameData[]> {
+    if (!CLIENT_ID || !CLIENT_SECRET) return [];
+
+    const token = await getAccessToken();
+    const platformID = PLATFORM_TO_IGDB_ID[platform];
+    const whereClause = platformID ? `where platforms = (${platformID}); ` : '';
+
+    try {
+        const res = await axios.post(
+            'https://api.igdb.com/v4/games',
+            `search "${query}"; fields id,name,summary,release_dates.human,cover.image_id,genres.name,platforms.name; ${whereClause}limit 10;`,
+            {
+                headers: {
+                    'Client-ID': CLIENT_ID!,
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'text/plain',
+                },
+            }
+        );
+
+        return res.data.map(mapGameData);
+    } catch (err) {
+        console.error(`IGDB search error for "${query}":`, err);
+        return [];
+    }
+}
+
 export async function searchGame(query: string, platform: string): Promise<IgdbGameData | null> {
     if (!CLIENT_ID || !CLIENT_SECRET) return null;
 
@@ -82,21 +123,7 @@ export async function searchGame(query: string, platform: string): Promise<IgdbG
             return null;
         }
 
-        const game = res.data[0]; // Best match
-
-        let thumbnail = null;
-        if (game.cover?.image_id) {
-            thumbnail = `https://images.igdb.com/igdb/image/upload/t_cover_big/${game.cover.image_id}.jpg`;
-        }
-
-        return {
-            name: game.name,
-            description: game.summary || 'No description available.',
-            thumbnail,
-            releaseDate: game.release_dates?.[0]?.human || '',
-            genres: game.genres?.map((g: { name: string }) => g.name).join(', ') || '',
-            platforms: game.platforms?.map((p: { name: string }) => p.name).join(', ') || '',
-        };
+        return mapGameData(res.data[0]);
     } catch (err) {
         console.error(`IGDB search error for "${query}":`, err);
         return null;

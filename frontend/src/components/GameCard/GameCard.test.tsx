@@ -6,6 +6,7 @@ import { Game } from '@/store/reducers/games/types';
 import { GameCard } from './GameCard';
 
 const baseGame: Game = {
+  id: 1,
   displayName: 'Win — Hades',
   thumbnail: '/media/Win/Hades/thumbnail.png',
   icon: '',

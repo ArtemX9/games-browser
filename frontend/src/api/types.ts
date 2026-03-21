@@ -1,3 +1,12 @@
+export interface IgdbSearchResult {
+  name: string;
+  description: string;
+  thumbnail: string | null;
+  releaseDate: string;
+  genres: string;
+  platforms: string;
+}
+
 /**
  * Game row as returned by GET /api/games.
  * Mirrors the backend Game interface (snake_case, matching SQLite column names).

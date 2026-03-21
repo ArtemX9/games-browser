@@ -1,7 +1,9 @@
 import {
+  GAME_UPDATE_SUCCESS,
   GAMES_LOAD_FAILURE,
   GAMES_LOAD_START,
   GAMES_LOAD_SUCCESS,
+  gameUpdateSuccess,
   gamesLoadFailure,
   gamesLoadStart,
   gamesLoadSuccess,
@@ -22,7 +24,8 @@ const defaultAppState: IGamesReducer = {
 
 type GamesActionTypes = ReturnType<typeof gamesLoadStart> &
   ReturnType<typeof gamesLoadSuccess> &
-  ReturnType<typeof gamesLoadFailure>;
+  ReturnType<typeof gamesLoadFailure> &
+  ReturnType<typeof gameUpdateSuccess>;
 
 export const GamesReducer = (
   state = defaultAppState,
@@ -49,6 +52,20 @@ export const GamesReducer = (
         games: [],
         isLoading: false,
         isError: true,
+      };
+    case GAME_UPDATE_SUCCESS:
+      return {
+        ...state,
+        games: (state.games ?? []).map((g) =>
+          g.gameFolder === action.payload.gameFolder && g.platform === action.payload.platform
+            ? {
+                ...g,
+                displayName: action.payload.displayName,
+                thumbnail: action.payload.thumbnail,
+                description: action.payload.description,
+              }
+            : g,
+        ),
       };
     default:
       return state;

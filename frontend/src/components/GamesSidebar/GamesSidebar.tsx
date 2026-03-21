@@ -62,7 +62,7 @@ export function GamesSidebar({ platforms }: GamesSidebarProps) {
               {platforms.map((platform) => (
                 <SidebarMenuItem key={platform}>
                   <SidebarMenuButton
-                    onClick={() => handlePlatformClick(platform)}
+                    onClick={handlePlatformClick.bind(null, platform)}
                     tooltip={platform}
                   >
                     <span>{platform}</span>

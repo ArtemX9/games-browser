@@ -1,4 +1,5 @@
 export type Game = {
+  id: number;
   displayName: string;
   thumbnail: string;
   icon: string;

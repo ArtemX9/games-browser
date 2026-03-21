@@ -17,6 +17,7 @@ const defaultState: IGamesReducer = {
 };
 
 const mockGame: Game = {
+  id: 1,
   displayName: 'Hades',
   thumbnail: '',
   icon: '',

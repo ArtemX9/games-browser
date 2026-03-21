@@ -22,6 +22,7 @@ describe('games action creators', () => {
     it('creates action with correct type and games payload', () => {
       const games = [
         {
+          id: 1,
           displayName: 'Hades',
           platform: 'Win',
           thumbnail: '',
