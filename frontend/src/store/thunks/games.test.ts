@@ -2,12 +2,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import * as api from '@/api/api';
 import {
+  GAME_UPDATE_SUCCESS,
   GAMES_LOAD_FAILURE,
   GAMES_LOAD_START,
   GAMES_LOAD_SUCCESS,
 } from '@/store/actions/games';
+import { IgdbSearchResult } from '@/api/types';
 
-import { fetchGamesList } from './games';
+import { fetchGamesList, updateGameData } from './games';
 
 const getState = () => ({
   games: { games: null, isLoading: null, isError: null },
@@ -42,6 +44,7 @@ describe('fetchGamesList thunk', () => {
 
     expect(dispatch.mock.calls[1][0].type).toBe(GAMES_LOAD_SUCCESS);
     expect(dispatch.mock.calls[1][0].payload.games[0]).toEqual({
+      id: 1,
       displayName: 'Win — Hades',
       thumbnail: '/media/Win/Hades/thumbnail.png',
       icon: '',
@@ -89,5 +92,78 @@ describe('fetchGamesList thunk', () => {
     expect(dispatch.mock.calls[0][0].type).toBe(GAMES_LOAD_START);
     expect(dispatch.mock.calls[1][0].type).toBe(GAMES_LOAD_FAILURE);
     expect(dispatch.mock.calls[1][0].payload.error).toContain('Network error');
+  });
+});
+
+describe('updateGameData thunk', () => {
+  const dispatch = vi.fn();
+  const getState = () => ({ games: { games: null, isLoading: null, isError: null } });
+
+  const mockSelected: IgdbSearchResult = {
+    name: 'Hades',
+    description: 'A rogue-like dungeon crawler.',
+    thumbnail: 'https://example.com/hades.jpg',
+    releaseDate: '2020',
+    genres: 'RPG',
+    platforms: 'PC (Microsoft Windows)',
+  };
+
+  beforeEach(() => {
+    dispatch.mockClear();
+    vi.spyOn(api, 'updateGame').mockResolvedValue(undefined);
+  });
+
+  it('uses selected.name as displayName when no customDisplayName', async () => {
+    await updateGameData({
+      platform: 'Win',
+      gameFolder: 'Hades',
+      selected: mockSelected,
+    })(dispatch, getState);
+
+    expect(dispatch).toHaveBeenCalledTimes(1);
+    expect(dispatch.mock.calls[0][0].type).toBe(GAME_UPDATE_SUCCESS);
+    expect(dispatch.mock.calls[0][0].payload.displayName).toBe('Hades');
+  });
+
+  it('uses customDisplayName when provided', async () => {
+    await updateGameData({
+      platform: 'Win',
+      gameFolder: 'Hades',
+      selected: mockSelected,
+      customDisplayName: 'Custom Title',
+    })(dispatch, getState);
+
+    expect(dispatch.mock.calls[0][0].payload.displayName).toBe('Custom Title');
+  });
+
+  it('passes customDisplayName to updateGame API call', async () => {
+    await updateGameData({
+      platform: 'Win',
+      gameFolder: 'Hades',
+      selected: mockSelected,
+      customDisplayName: 'Custom Title',
+    })(dispatch, getState);
+
+    expect(api.updateGame).toHaveBeenCalledWith(
+      'Win',
+      'Hades',
+      expect.objectContaining({ displayName: 'Custom Title' }),
+    );
+  });
+
+  it('dispatches GAME_UPDATE_SUCCESS with correct fields', async () => {
+    await updateGameData({
+      platform: 'Win',
+      gameFolder: 'Hades',
+      selected: mockSelected,
+    })(dispatch, getState);
+
+    expect(dispatch.mock.calls[0][0].payload).toEqual({
+      gameFolder: 'Hades',
+      platform: 'Win',
+      displayName: 'Hades',
+      thumbnail: 'https://example.com/hades.jpg',
+      description: 'A rogue-like dungeon crawler.',
+    });
   });
 });

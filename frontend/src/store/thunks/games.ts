@@ -47,12 +47,13 @@ interface IUpdateGame {
   platform: string;
   gameFolder: string;
   selected: IgdbSearchResult;
+  customDisplayName?: string;
 }
 
 export const updateGameData =
-  ({ platform, gameFolder, selected }: IUpdateGame): Action =>
+  ({ platform, gameFolder, selected, customDisplayName }: IUpdateGame): Action =>
   async (dispatch) => {
-    const displayName = selected.name;
+    const displayName = customDisplayName ?? selected.name;
     await api.updateGame(platform, gameFolder, {
       displayName,
       thumbnail: selected.thumbnail ?? '',

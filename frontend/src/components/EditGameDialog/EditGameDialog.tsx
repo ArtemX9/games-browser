@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 
-import { CheckIcon, Loader2Icon, XIcon } from 'lucide-react';
+import { CheckIcon, Loader2Icon, SearchIcon, XIcon } from 'lucide-react';
 
 import { searchIgdb } from '@/api/api';
 import { IgdbSearchResult } from '@/api/types';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { useAppDispatch } from '@/store/hooks';
 import { updateGameData } from '@/store/thunks/games';
 
@@ -22,22 +23,32 @@ export function EditGameDialog({
   onClose,
 }: EditGameDialogProps) {
   const dispatch = useAppDispatch();
+  const [searchTitle, setSearchTitle] = useState(gameName);
   const [results, setResults] = useState<IgdbSearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selected, setSelected] = useState<IgdbSearchResult | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
-  useEffect(() => {
+  const runSearch = (query: string) => {
     setIsLoading(true);
-    searchIgdb(gameName, platform)
+    setResults([]);
+    setSelected(null);
+    searchIgdb(query, platform)
       .then((data) => setResults(data ?? []))
       .finally(() => setIsLoading(false));
-  }, [gameName, platform]);
+  };
+
+  useEffect(() => {
+    runSearch(gameName);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleSearch = () => runSearch(searchTitle);
 
   const handleDone = async () => {
     if (!selected) return;
     setIsSaving(true);
-    await dispatch(updateGameData({ platform, gameFolder, selected }));
+    const customDisplayName = searchTitle !== gameName ? searchTitle : undefined;
+    await dispatch(updateGameData({ platform, gameFolder, selected, customDisplayName }));
     setIsSaving(false);
     onClose();
   };
@@ -49,12 +60,29 @@ export function EditGameDialog({
     >
       <div className='bg-background border rounded-xl shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col'>
         {/* Header */}
-        <div className='flex items-center justify-between px-5 py-4 border-b'>
-          <div>
-            <h2 className='font-semibold text-base'>Select matching game</h2>
-            <p className='text-sm text-muted-foreground mt-0.5 truncate max-w-sm'>{gameName}</p>
+        <div className='flex items-start justify-between px-5 py-4 border-b gap-3'>
+          <div className='flex-1 min-w-0'>
+            <h2 className='font-semibold text-base mb-2'>Select matching game</h2>
+            <div className='flex gap-2'>
+              <Input
+                value={searchTitle}
+                onChange={(e) => setSearchTitle(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                placeholder='Game title…'
+                className='h-8 text-sm'
+              />
+              <Button
+                variant='outline'
+                size='sm'
+                onClick={handleSearch}
+                disabled={isLoading || !searchTitle.trim()}
+              >
+                <SearchIcon className='size-3.5 mr-1.5' />
+                Search
+              </Button>
+            </div>
           </div>
-          <Button variant='ghost' size='icon' onClick={onClose}>
+          <Button variant='ghost' size='icon' className='shrink-0' onClick={onClose}>
             <XIcon className='size-4' />
           </Button>
         </div>
