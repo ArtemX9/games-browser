@@ -62,7 +62,8 @@ export function EditGameDialog({
         {/* Header */}
         <div className='flex items-start justify-between px-5 py-4 border-b gap-3'>
           <div className='flex-1 min-w-0'>
-            <h2 className='font-semibold text-base mb-2'>Select matching game</h2>
+            <h2 className='font-semibold text-base'>Select matching game</h2>
+            <p className='text-sm text-muted-foreground mt-0.5 mb-2 truncate'>{gameFolder}</p>
             <div className='flex gap-2'>
               <Input
                 value={searchTitle}

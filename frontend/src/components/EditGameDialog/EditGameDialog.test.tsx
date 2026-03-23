@@ -34,6 +34,16 @@ const defaultProps = {
   onClose: vi.fn(),
 };
 
+// Waits for the initial search to finish (Search button becomes enabled)
+const waitForSearchReady = () =>
+  waitFor(() =>
+    expect(screen.getByRole('button', { name: /search/i })).not.toBeDisabled(),
+  );
+
+// Clicks the result item (a button whose accessible name includes the result name)
+const clickResult = (name: RegExp | string) =>
+  fireEvent.click(screen.getByRole('button', { name }));
+
 describe('EditGameDialog', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -43,6 +53,11 @@ describe('EditGameDialog', () => {
   it('renders input pre-filled with gameName', () => {
     render(<EditGameDialog {...defaultProps} />);
     expect(screen.getByPlaceholderText('Game title…')).toHaveValue('Hades');
+  });
+
+  it('shows the original folder name as subtitle', () => {
+    render(<EditGameDialog {...defaultProps} />);
+    expect(screen.getByText('Hades')).toBeInTheDocument();
   });
 
   it('searches with gameName on mount', async () => {
@@ -55,13 +70,13 @@ describe('EditGameDialog', () => {
   it('shows search results after load', async () => {
     render(<EditGameDialog {...defaultProps} />);
     await waitFor(() => {
-      expect(screen.getByText('Hades')).toBeInTheDocument();
+      expect(screen.getByText('A rogue-like dungeon crawler.')).toBeInTheDocument();
     });
   });
 
   it('triggers new search with modified title on Search button click', async () => {
     render(<EditGameDialog {...defaultProps} />);
-    await waitFor(() => screen.getByText('Hades'));
+    await waitForSearchReady();
 
     const input = screen.getByPlaceholderText('Game title…');
     fireEvent.change(input, { target: { value: 'Hades: The Game' } });
@@ -74,7 +89,7 @@ describe('EditGameDialog', () => {
 
   it('triggers new search on Enter key in input', async () => {
     render(<EditGameDialog {...defaultProps} />);
-    await waitFor(() => screen.getByText('Hades'));
+    await waitForSearchReady();
 
     const input = screen.getByPlaceholderText('Game title…');
     fireEvent.change(input, { target: { value: 'New Search' } });
@@ -87,12 +102,12 @@ describe('EditGameDialog', () => {
 
   it('passes customDisplayName when title is modified before Done', async () => {
     render(<EditGameDialog {...defaultProps} />);
-    await waitFor(() => screen.getByText('Hades'));
+    await waitForSearchReady();
 
     const input = screen.getByPlaceholderText('Game title…');
     fireEvent.change(input, { target: { value: 'Custom Title' } });
 
-    fireEvent.click(screen.getByText('Hades'));
+    clickResult(/hades/i);
     fireEvent.click(screen.getByRole('button', { name: /done/i }));
 
     await waitFor(() => {
@@ -104,9 +119,9 @@ describe('EditGameDialog', () => {
 
   it('does not pass customDisplayName when title is unchanged', async () => {
     render(<EditGameDialog {...defaultProps} />);
-    await waitFor(() => screen.getByText('Hades'));
+    await waitForSearchReady();
 
-    fireEvent.click(screen.getByText('Hades'));
+    clickResult(/hades/i);
     fireEvent.click(screen.getByRole('button', { name: /done/i }));
 
     await waitFor(() => {
@@ -118,9 +133,9 @@ describe('EditGameDialog', () => {
 
   it('calls onClose after successful save', async () => {
     render(<EditGameDialog {...defaultProps} />);
-    await waitFor(() => screen.getByText('Hades'));
+    await waitForSearchReady();
 
-    fireEvent.click(screen.getByText('Hades'));
+    clickResult(/hades/i);
     fireEvent.click(screen.getByRole('button', { name: /done/i }));
 
     await waitFor(() => {
@@ -136,9 +151,9 @@ describe('EditGameDialog', () => {
 
   it('clears selection when a new search is triggered', async () => {
     render(<EditGameDialog {...defaultProps} />);
-    await waitFor(() => screen.getByText('Hades'));
+    await waitForSearchReady();
 
-    fireEvent.click(screen.getByText('Hades'));
+    clickResult(/hades/i);
     expect(screen.getByRole('button', { name: /done/i })).not.toBeDisabled();
 
     const input = screen.getByPlaceholderText('Game title…');
@@ -154,9 +169,7 @@ describe('EditGameDialog', () => {
     vi.spyOn(api, 'searchIgdb').mockResolvedValue([]);
     render(<EditGameDialog {...defaultProps} />);
     await waitFor(() => {
-      expect(
-        screen.getByText(/no results found on igdb/i),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/no results found on igdb/i)).toBeInTheDocument();
     });
   });
 });
