@@ -6,4 +6,7 @@ export type Game = {
   description: string;
   platform: string;
   gameFolder: string;
+  releaseDate: string;
+  genres: string;
+  igdbPlatforms: string;
 };

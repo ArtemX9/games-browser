@@ -35,6 +35,9 @@ export const fetchGamesList =
             description: game.description,
             platform: game.platform,
             gameFolder: game.game_folder,
+            releaseDate: game.release_date,
+            genres: game.genres,
+            igdbPlatforms: game.igdb_platforms,
           })),
         }),
       );
@@ -51,7 +54,12 @@ interface IUpdateGame {
 }
 
 export const updateGameData =
-  ({ platform, gameFolder, selected, customDisplayName }: IUpdateGame): Action =>
+  ({
+    platform,
+    gameFolder,
+    selected,
+    customDisplayName,
+  }: IUpdateGame): Action =>
   async (dispatch) => {
     const displayName = customDisplayName ?? selected.name;
     await api.updateGame(platform, gameFolder, {
@@ -69,6 +77,9 @@ export const updateGameData =
         displayName,
         thumbnail: selected.thumbnail ?? '',
         description: selected.description,
+        releaseDate: selected.releaseDate,
+        genres: selected.genres,
+        igdbPlatforms: selected.platforms,
       }),
     );
   };

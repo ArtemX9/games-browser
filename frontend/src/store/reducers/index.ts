@@ -1,6 +1,6 @@
 import { Reducer, combineReducers } from 'redux';
 
-import { GamesReducer, IGamesReducer } from './games/reducer.ts';
+import { GamesReducer, IGamesReducer } from './games/reducer';
 
 export interface IApplicationState {
   games: IGamesReducer;

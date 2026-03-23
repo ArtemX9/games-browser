@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as api from '@/api/api';
 import { SidebarProvider } from '@/components/ui/sidebar';
 
-import { GamesSidebar } from './GamesSidebar';
+import GamesSidebar from './GamesSidebar';
 
 vi.mock('sonner', () => ({
   toast: { success: vi.fn() },

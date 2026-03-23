@@ -24,6 +24,9 @@ const mockGame: Game = {
   description: '',
   platform: 'Win',
   gameFolder: 'Hades',
+  releaseDate: '',
+  genres: '',
+  igdbPlatforms: '',
 };
 
 describe('GamesReducer', () => {

@@ -1,4 +1,9 @@
-import { getGamesURL, getIgdbSearchURL, getRescanURL, getUpdateGameURL } from '@/api/routes';
+import {
+  getGamesURL,
+  getIgdbSearchURL,
+  getRescanURL,
+  getUpdateGameURL,
+} from '@/api/routes';
 import { IgdbSearchResult } from '@/api/types';
 
 export const defaultFetchSettings: RequestInit = {
@@ -139,5 +144,9 @@ export const updateGame = async (
   },
 ) => {
   const url = getUpdateGameURL(platform, gameFolder);
-  return await apiFetch(url, 'PATCH', data as unknown as Record<string, unknown>);
+  return await apiFetch(
+    url,
+    'PATCH',
+    data as unknown as Record<string, unknown>,
+  );
 };

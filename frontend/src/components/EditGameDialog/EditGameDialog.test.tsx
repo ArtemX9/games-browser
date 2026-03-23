@@ -5,7 +5,7 @@ import * as api from '@/api/api';
 import { IgdbSearchResult } from '@/api/types';
 import * as gamesThunks from '@/store/thunks/games';
 
-import { EditGameDialog } from './EditGameDialog';
+import EditGameDialog from './EditGameDialog';
 
 const mockDispatch = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
 
@@ -70,7 +70,9 @@ describe('EditGameDialog', () => {
   it('shows search results after load', async () => {
     render(<EditGameDialog {...defaultProps} />);
     await waitFor(() => {
-      expect(screen.getByText('A rogue-like dungeon crawler.')).toBeInTheDocument();
+      expect(
+        screen.getByText('A rogue-like dungeon crawler.'),
+      ).toBeInTheDocument();
     });
   });
 

@@ -1,13 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import * as api from '@/api/api';
+import { IgdbSearchResult } from '@/api/types';
 import {
-  GAME_UPDATE_SUCCESS,
   GAMES_LOAD_FAILURE,
   GAMES_LOAD_START,
   GAMES_LOAD_SUCCESS,
+  GAME_UPDATE_SUCCESS,
 } from '@/store/actions/games';
-import { IgdbSearchResult } from '@/api/types';
 
 import { fetchGamesList, updateGameData } from './games';
 
@@ -51,6 +51,9 @@ describe('fetchGamesList thunk', () => {
       description: 'A rogue-like dungeon crawler.',
       platform: 'Win',
       gameFolder: 'Hades',
+      releaseDate: '2020',
+      genres: 'Action',
+      igdbPlatforms: 'PC (Microsoft Windows)',
     });
   });
 
@@ -77,8 +80,12 @@ describe('fetchGamesList thunk', () => {
       'PS 2 — Shadow of the Colossus',
     );
     expect(successPayload.games[0].gameFolder).toBe('Shadow of the Colossus');
+    expect(successPayload.games[0].releaseDate).toBe('2005');
+    expect(successPayload.games[0].igdbPlatforms).toBe('PlayStation 2');
     expect('display_name' in successPayload.games[0]).toBe(false);
     expect('game_folder' in successPayload.games[0]).toBe(false);
+    expect('release_date' in successPayload.games[0]).toBe(false);
+    expect('igdb_platforms' in successPayload.games[0]).toBe(false);
   });
 
   it('dispatches GAMES_LOAD_START then GAMES_LOAD_FAILURE on error', async () => {
@@ -97,7 +104,9 @@ describe('fetchGamesList thunk', () => {
 
 describe('updateGameData thunk', () => {
   const dispatch = vi.fn();
-  const getState = () => ({ games: { games: null, isLoading: null, isError: null } });
+  const getState = () => ({
+    games: { games: null, isLoading: null, isError: null },
+  });
 
   const mockSelected: IgdbSearchResult = {
     name: 'Hades',
@@ -164,6 +173,9 @@ describe('updateGameData thunk', () => {
       displayName: 'Hades',
       thumbnail: 'https://example.com/hades.jpg',
       description: 'A rogue-like dungeon crawler.',
+      releaseDate: '2020',
+      genres: 'RPG',
+      igdbPlatforms: 'PC (Microsoft Windows)',
     });
   });
 });

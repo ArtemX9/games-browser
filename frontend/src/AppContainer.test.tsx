@@ -18,7 +18,7 @@ import AppContainer from './AppContainer';
 
 // Isolate from complex child UI so test focuses on Redux ↔ API wiring
 vi.mock('@/components/GamesSidebar/GamesSidebar', () => ({
-  GamesSidebar: ({ platforms }: { platforms: string[] }) => (
+  default: ({ platforms }: { platforms: string[] }) => (
     <nav data-testid='games-sidebar'>
       {platforms.map((p) => (
         <span key={p}>{p}</span>
@@ -28,7 +28,7 @@ vi.mock('@/components/GamesSidebar/GamesSidebar', () => ({
 }));
 
 vi.mock('@/components/ThemeProvider/ModeToggle', () => ({
-  ModeToggle: () => null,
+  default: () => null,
 }));
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));

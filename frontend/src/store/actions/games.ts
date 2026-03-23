@@ -46,6 +46,9 @@ interface IGameUpdateSuccess {
   displayName: string;
   thumbnail: string;
   description: string;
+  releaseDate: string;
+  genres: string;
+  igdbPlatforms: string;
 }
 
 export const gameUpdateSuccess = ({
@@ -54,7 +57,19 @@ export const gameUpdateSuccess = ({
   displayName,
   thumbnail,
   description,
+  releaseDate,
+  genres,
+  igdbPlatforms,
 }: IGameUpdateSuccess) => ({
   type: GAME_UPDATE_SUCCESS,
-  payload: { gameFolder, platform, displayName, thumbnail, description },
+  payload: {
+    gameFolder,
+    platform,
+    displayName,
+    thumbnail,
+    description,
+    releaseDate,
+    genres,
+    igdbPlatforms,
+  },
 });

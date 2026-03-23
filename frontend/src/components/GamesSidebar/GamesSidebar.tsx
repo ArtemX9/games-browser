@@ -19,7 +19,7 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 
-interface GamesSidebarProps {
+interface IGamesSidebar {
   platforms: string[];
 }
 
@@ -27,24 +27,27 @@ function platformToId(platform: string): string {
   return platform.toLowerCase().replace(/\s+/g, '-');
 }
 
-export function GamesSidebar({ platforms }: GamesSidebarProps) {
+function GamesSidebar({ platforms }: IGamesSidebar) {
+  // 4. State
   const [isRescanning, setIsRescanning] = useState(false);
 
-  const handleRescan = async () => {
+  // 7. Event handlers
+  async function handleRescan() {
     setIsRescanning(true);
     await triggerRescan();
     setIsRescanning(false);
     toast.success('Rescan complete');
-  };
+  }
 
-  const handlePlatformClick = (platform: string) => {
+  function handlePlatformClick(platform: string) {
     const id = platformToId(platform);
     const el = document.getElementById(id);
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-  };
+  }
 
+  // 9. Main return
   return (
     <Sidebar collapsible='icon'>
       <SidebarHeader className='flex flex-row items-center gap-2 py-3'>
@@ -62,7 +65,7 @@ export function GamesSidebar({ platforms }: GamesSidebarProps) {
               {platforms.map((platform) => (
                 <SidebarMenuItem key={platform}>
                   <SidebarMenuButton
-                    onClick={handlePlatformClick.bind(null, platform)}
+                    onClick={() => handlePlatformClick(platform)}
                     tooltip={platform}
                   >
                     <span>{platform}</span>
@@ -91,3 +94,5 @@ export function GamesSidebar({ platforms }: GamesSidebarProps) {
     </Sidebar>
   );
 }
+
+export default GamesSidebar;

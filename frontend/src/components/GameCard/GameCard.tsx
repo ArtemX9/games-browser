@@ -2,22 +2,35 @@ import { DownloadIcon, PencilIcon } from 'lucide-react';
 import { useState } from 'react';
 
 import { getDownloadURL } from '@/api/routes';
-import { EditGameDialog } from '@/components/EditGameDialog/EditGameDialog';
+import EditGameDialog from '@/components/EditGameDialog/EditGameDialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { Game } from '@/store/reducers/games/types';
 
-interface GameCardProps {
+interface IGameCard {
   game: Game;
   className?: string;
 }
 
-export function GameCard({ game, className }: GameCardProps) {
-  const shortName = game.displayName.split(' — ')[1] || game.displayName;
-  const downloadURL = getDownloadURL(game.platform, game.gameFolder);
+function GameCard({ game, className }: IGameCard) {
+  // 4. State
   const [isEditOpen, setIsEditOpen] = useState(false);
 
+  // 5. Derived values
+  const shortName = game.displayName.split(' — ')[1] || game.displayName;
+  const downloadURL = getDownloadURL(game.platform, game.gameFolder);
+
+  // 7. Event handlers
+  function handleEditOpen() {
+    setIsEditOpen(true);
+  }
+
+  function handleEditClose() {
+    setIsEditOpen(false);
+  }
+
+  // 9. Main return
   return (
     <>
       <Card
@@ -40,7 +53,7 @@ export function GameCard({ game, className }: GameCardProps) {
             variant='secondary'
             size='icon'
             className='absolute top-2 right-2 size-7 opacity-0 group-hover:opacity-100 transition-opacity'
-            onClick={setIsEditOpen.bind(null, true)}
+            onClick={handleEditOpen}
             title='Edit game info'
           >
             <PencilIcon className='size-3.5' />
@@ -71,9 +84,11 @@ export function GameCard({ game, className }: GameCardProps) {
           gameName={shortName}
           platform={game.platform}
           gameFolder={game.gameFolder}
-          onClose={setIsEditOpen.bind(null, false)}
+          onClose={handleEditClose}
         />
       )}
     </>
   );
 }
+
+export default GameCard;

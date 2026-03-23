@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  games-browser-frontend:
+    image: node:22-alpine
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    environment:
+      - NODE_ENV=development
+    working_dir: /app
+    command: ["sh", "-c", "npm install --legacy-peer-deps && npm run dev"]
+    depends_on:
+      - games-browser-backend
+
+  games-browser-backend:
+    image: node:22-alpine
+    volumes:
+      - ./backend:/app
+      - ${GAMES_PATH}:/games:ro
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - IGDB_CLIENT_ID=${IGDB_CLIENT_ID}
+      - IGDB_CLIENT_SECRET=${IGDB_CLIENT_SECRET}
+    working_dir: /app
+    command: ["sh", "-c", "npm install && npm run build && npm run start"]

@@ -1,6 +1,6 @@
-import { GameCard } from '@/components/GameCard/GameCard';
-import { GamesSidebar } from '@/components/GamesSidebar/GamesSidebar';
-import { ModeToggle } from '@/components/ThemeProvider/ModeToggle';
+import GameCard from '@/components/GameCard/GameCard';
+import GamesSidebar from '@/components/GamesSidebar/GamesSidebar';
+import ModeToggle from '@/components/ThemeProvider/ModeToggle';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -69,7 +69,11 @@ function App({ isLoading, isError, games }: IApp) {
 
               <div className='flex flex-wrap items-center justify-center gap-6'>
                 {games[platform].map((game) => (
-                  <GameCard key={game.displayName} game={game} className='last:justify-start' />
+                  <GameCard
+                    key={game.displayName}
+                    game={game}
+                    className='last:justify-start'
+                  />
                 ))}
               </div>
             </section>

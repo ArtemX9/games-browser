@@ -22,9 +22,14 @@ export default defineConfig({
     },
   },
   server: {
+    host: '0.0.0.0',
+    port: 5173,
     allowedHosts: ['nas.local', 'localhost:3001'],
     proxy: {
       '/api': 'http://games-browser-backend:3001',
+    },
+    watch: {
+      usePolling: true,
     },
   },
 });

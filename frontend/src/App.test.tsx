@@ -8,7 +8,7 @@ import App from './App';
 
 // Isolate App from complex child components that need additional providers/setup
 vi.mock('@/components/GamesSidebar/GamesSidebar', () => ({
-  GamesSidebar: ({ platforms }: { platforms: string[] }) => (
+  default: ({ platforms }: { platforms: string[] }) => (
     <nav data-testid='games-sidebar'>
       {platforms.map((p) => (
         <span key={p}>{p}</span>
@@ -18,7 +18,7 @@ vi.mock('@/components/GamesSidebar/GamesSidebar', () => ({
 }));
 
 vi.mock('@/components/ThemeProvider/ModeToggle', () => ({
-  ModeToggle: () => <button>Toggle theme</button>,
+  default: () => <button>Toggle theme</button>,
 }));
 
 function renderApp(props: {
@@ -41,6 +41,9 @@ const makeGame = (platform: string, name: string, gameFolder = name): Game => ({
   description: '',
   platform,
   gameFolder,
+  releaseDate: '',
+  genres: '',
+  igdbPlatforms: '',
 });
 
 describe('App', () => {

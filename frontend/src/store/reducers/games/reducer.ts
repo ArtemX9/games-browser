@@ -1,8 +1,8 @@
 import {
-  GAME_UPDATE_SUCCESS,
   GAMES_LOAD_FAILURE,
   GAMES_LOAD_START,
   GAMES_LOAD_SUCCESS,
+  GAME_UPDATE_SUCCESS,
   gameUpdateSuccess,
   gamesLoadFailure,
   gamesLoadStart,
@@ -22,10 +22,11 @@ const defaultAppState: IGamesReducer = {
   isError: null,
 };
 
-type GamesActionTypes = ReturnType<typeof gamesLoadStart> &
-  ReturnType<typeof gamesLoadSuccess> &
-  ReturnType<typeof gamesLoadFailure> &
-  ReturnType<typeof gameUpdateSuccess>;
+type GamesActionTypes =
+  | ReturnType<typeof gamesLoadStart>
+  | ReturnType<typeof gamesLoadSuccess>
+  | ReturnType<typeof gamesLoadFailure>
+  | ReturnType<typeof gameUpdateSuccess>;
 
 export const GamesReducer = (
   state = defaultAppState,
@@ -39,13 +40,15 @@ export const GamesReducer = (
         isLoading: true,
         isError: false,
       };
-    case GAMES_LOAD_SUCCESS:
+    case GAMES_LOAD_SUCCESS: {
+      const typedAction = action as ReturnType<typeof gamesLoadSuccess>;
       return {
         ...state,
-        games: action.payload.games,
+        games: typedAction.payload.games,
         isLoading: false,
         isError: false,
       };
+    }
     case GAMES_LOAD_FAILURE:
       return {
         ...state,
@@ -53,20 +56,26 @@ export const GamesReducer = (
         isLoading: false,
         isError: true,
       };
-    case GAME_UPDATE_SUCCESS:
+    case GAME_UPDATE_SUCCESS: {
+      const typedAction = action as ReturnType<typeof gameUpdateSuccess>;
       return {
         ...state,
         games: (state.games ?? []).map((g) =>
-          g.gameFolder === action.payload.gameFolder && g.platform === action.payload.platform
+          g.gameFolder === typedAction.payload.gameFolder &&
+          g.platform === typedAction.payload.platform
             ? {
                 ...g,
-                displayName: action.payload.displayName,
-                thumbnail: action.payload.thumbnail,
-                description: action.payload.description,
+                displayName: typedAction.payload.displayName,
+                thumbnail: typedAction.payload.thumbnail,
+                description: typedAction.payload.description,
+                releaseDate: typedAction.payload.releaseDate,
+                genres: typedAction.payload.genres,
+                igdbPlatforms: typedAction.payload.igdbPlatforms,
               }
             : g,
         ),
       };
+    }
     default:
       return state;
   }

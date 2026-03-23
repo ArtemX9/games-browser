@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 import { Game } from '@/store/reducers/games/types';
 
-import { GameCard } from './GameCard';
+import GameCard from './GameCard';
 
 const baseGame: Game = {
   id: 1,
@@ -13,6 +13,9 @@ const baseGame: Game = {
   description: 'A rogue-like dungeon crawler.',
   platform: 'Win',
   gameFolder: 'Hades',
+  releaseDate: '2020',
+  genres: 'Action',
+  igdbPlatforms: 'PC (Microsoft Windows)',
 };
 
 describe('GameCard', () => {
