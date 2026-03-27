@@ -1,36 +1,27 @@
-import { useState } from 'react';
-
-import GameDetailModal from '@/components/GameDetailModal/GameDetailModal';
+import { GameInfo } from '@/App';
 import { cn } from '@/lib/utils';
 import { Game } from '@/store/reducers/games/types';
 
 interface IGameTile {
   game: Game;
   className?: string;
+  onOpenGameTileClick: ({ shortName, game }: GameInfo) => void;
 }
 
-function GameTile({ game, className }: IGameTile) {
-  // 4. State
-  const [isDetailOpen, setIsDetailOpen] = useState(false);
-
+function GameTile({ game, className, onOpenGameTileClick }: IGameTile) {
   // 5. Derived values
   const shortName = game.displayName.split(' — ')[1] || game.displayName;
 
   // 7. Event handlers
-  function handleClick() {
-    setIsDetailOpen(true);
+  function handleGameTileClick() {
+    onOpenGameTileClick({ shortName, game });
   }
-
-  function handleDetailClose() {
-    setIsDetailOpen(false);
-  }
-
   // 9. Main return
   return (
     <>
       <button
         type='button'
-        onClick={handleClick}
+        onClick={handleGameTileClick}
         className={cn(
           'group relative overflow-hidden rounded-lg bg-card border border-border',
           'w-[140px] sm:w-[160px]',
@@ -59,10 +50,6 @@ function GameTile({ game, className }: IGameTile) {
           </p>
         </div>
       </button>
-
-      {isDetailOpen && (
-        <GameDetailModal game={game} onClose={handleDetailClose} />
-      )}
     </>
   );
 }

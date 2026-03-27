@@ -1,7 +1,9 @@
 import { LayoutGridIcon, LayoutListIcon } from 'lucide-react';
 import { useState } from 'react';
 
+import EditGameDialog from '@/components/EditGameDialog/EditGameDialog';
 import GameCard from '@/components/GameCard/GameCard';
+import GameDetailModal from '@/components/GameDetailModal/GameDetailModal';
 import GameTile from '@/components/GameTile/GameTile';
 import GamesSidebar from '@/components/GamesSidebar/GamesSidebar';
 import PlatformSection from '@/components/PlatformSection/PlatformSection';
@@ -16,7 +18,15 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { Game } from '@/store/reducers/games/types';
 
-type ViewMode = 'cards' | 'tiles';
+export enum ViewMode {
+  CARDS = 'cards',
+  TILES = 'titles',
+}
+
+export type GameInfo = {
+  shortName: string;
+  game: Game;
+};
 
 interface IApp {
   isLoading: boolean;
@@ -30,11 +40,34 @@ function platformToId(platform: string): string {
 
 function App({ isLoading, isError, games }: IApp) {
   // 4. State
-  const [viewMode, setViewMode] = useState<ViewMode>('cards');
+  const [viewMode, setViewMode] = useState<ViewMode>(ViewMode.CARDS);
+  const [editiableGame, setEditableGame] = useState<GameInfo | null>(null);
+  const [gameDetail, setGameDetail] = useState<GameInfo | null>(null);
 
   // 7. Event handlers
   function handleToggleViewMode() {
-    setViewMode((prev) => (prev === 'cards' ? 'tiles' : 'cards'));
+    setViewMode((prev) =>
+      prev === ViewMode.CARDS ? ViewMode.TILES : ViewMode.CARDS,
+    );
+  }
+
+  function handleEditGameModalOpenClick({ shortName, game }: GameInfo) {
+    setEditableGame({
+      shortName,
+      game,
+    });
+  }
+
+  function handleEditGameModalCloseClick() {
+    setEditableGame(null);
+  }
+
+  function handleOpenGameTileClick({ shortName, game }: GameInfo) {
+    setGameDetail({ shortName, game });
+  }
+
+  function handleCloseGameTileClick() {
+    setGameDetail(null);
   }
 
   // 8. Early returns
@@ -71,12 +104,12 @@ function App({ isLoading, isError, games }: IApp) {
               size='icon'
               onClick={handleToggleViewMode}
               title={
-                viewMode === 'cards'
+                viewMode === ViewMode.CARDS
                   ? 'Switch to tiles view'
                   : 'Switch to cards view'
               }
             >
-              {viewMode === 'cards' ? (
+              {viewMode === ViewMode.CARDS ? (
                 <LayoutGridIcon className='size-4' />
               ) : (
                 <LayoutListIcon className='size-4' />
@@ -94,25 +127,27 @@ function App({ isLoading, isError, games }: IApp) {
               gameCount={games[platform].length}
               sectionId={platformToId(platform)}
             >
-              {viewMode === 'cards' ? (
-                <div className='flex flex-wrap items-center justify-center gap-6'>
-                  {games[platform].map((game) => (
-                    <GameCard
-                      key={game.displayName}
-                      game={game}
-                      className='last:justify-start'
-                    />
-                  ))}
-                </div>
-              ) : (
-                <div className='flex flex-wrap gap-3'>
-                  {games[platform].map((game) => (
-                    <GameTile key={game.displayName} game={game} />
-                  ))}
-                </div>
-              )}
+              <div className='flex flex-wrap items-stretch justify-center gap-6'>
+                {games[platform].map(renderGameCard)}
+              </div>
             </PlatformSection>
           ))}
+
+          {!!editiableGame && (
+            <EditGameDialog
+              gameName={editiableGame.shortName}
+              platform={editiableGame.game.platform}
+              gameFolder={editiableGame.game.gameFolder}
+              onClose={handleEditGameModalCloseClick}
+            />
+          )}
+
+          {!!gameDetail && (
+            <GameDetailModal
+              game={gameDetail.game}
+              onClose={handleCloseGameTileClick}
+            />
+          )}
 
           {platforms.length === 0 && renderNoGames()}
         </main>
@@ -121,6 +156,27 @@ function App({ isLoading, isError, games }: IApp) {
   );
 
   // 10. Render helpers
+  function renderGameCard(game: Game) {
+    if (viewMode === ViewMode.CARDS) {
+      return (
+        <GameCard
+          key={game.displayName}
+          game={game}
+          className='last:justify-start'
+          onEditGameModalOpenClick={handleEditGameModalOpenClick}
+        />
+      );
+    }
+
+    return (
+      <GameTile
+        key={game.displayName}
+        game={game}
+        onOpenGameTileClick={handleOpenGameTileClick}
+      />
+    );
+  }
+
   function renderNoGames() {
     return (
       <Card className='mx-auto max-w-md text-center p-8'>
