@@ -1,12 +1,7 @@
 import * as api from '@/api/api';
 import { ApiGame, IgdbSearchResult } from '@/api/types';
 
-import {
-  gameUpdateSuccess,
-  gamesLoadFailure,
-  gamesLoadStart,
-  gamesLoadSuccess,
-} from '../actions/games';
+import { gameUpdateSuccess, gamesLoadFailure, gamesLoadStart, gamesLoadSuccess } from '../actions/games';
 import { Action } from '../hooks';
 
 interface IFetchGames {
@@ -54,12 +49,7 @@ interface IUpdateGame {
 }
 
 export const updateGameData =
-  ({
-    platform,
-    gameFolder,
-    selected,
-    customDisplayName,
-  }: IUpdateGame): Action =>
+  ({ platform, gameFolder, selected, customDisplayName }: IUpdateGame): Action =>
   async (dispatch) => {
     const displayName = customDisplayName ?? selected.name;
     await api.updateGame(platform, gameFolder, {

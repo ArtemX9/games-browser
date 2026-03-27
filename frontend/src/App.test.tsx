@@ -21,11 +21,7 @@ vi.mock('@/components/ThemeProvider/ModeToggle', () => ({
   default: () => <button>Toggle theme</button>,
 }));
 
-function renderApp(props: {
-  isLoading: boolean;
-  isError: boolean;
-  games: Record<string, Game[]>;
-}) {
+function renderApp(props: { isLoading: boolean; isError: boolean; games: Record<string, Game[]> }) {
   return render(
     <ThemeProvider defaultTheme='system' storageKey='test-theme'>
       <App {...props} />
@@ -68,9 +64,7 @@ describe('App', () => {
     it('renders skeleton placeholders', () => {
       renderApp({ isLoading: true, isError: false, games: {} });
       // 6 skeletons are rendered; each has the animate-pulse class from shadcn Skeleton
-      const skeletons = document
-        .querySelector('.grid')
-        ?.querySelectorAll('[class*="animate-pulse"]');
+      const skeletons = document.querySelector('.grid')?.querySelectorAll('[class*="animate-pulse"]');
       expect(skeletons?.length).toBeGreaterThan(0);
     });
   });

@@ -37,17 +37,14 @@ function GameTile({ game, className, onOpenGameTileClick }: IGameTile) {
             alt={shortName}
             className='w-full h-full object-cover transition-transform duration-200 group-hover:scale-105'
             onError={(e) => {
-              e.currentTarget.src =
-                'https://placehold.co/160x213?text=No+Image';
+              e.currentTarget.src = 'https://placehold.co/160x213?text=No+Image';
             }}
           />
         </div>
 
         {/* Title overlay */}
         <div className='px-2 py-2 bg-card'>
-          <p className='text-xs font-medium leading-snug line-clamp-2 text-foreground text-left'>
-            {shortName}
-          </p>
+          <p className='text-xs font-medium leading-snug line-clamp-2 text-foreground text-left'>{shortName}</p>
         </div>
       </button>
     </>

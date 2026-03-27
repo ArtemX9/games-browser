@@ -52,9 +52,7 @@ function GamesSidebar({ platforms }: IGamesSidebar) {
     <Sidebar collapsible='icon'>
       <SidebarHeader className='flex flex-row items-center gap-2 py-3'>
         <SidebarTrigger />
-        <span className='font-semibold text-sm truncate group-data-[collapsible=icon]:hidden'>
-          Games Library
-        </span>
+        <span className='font-semibold text-sm truncate group-data-[collapsible=icon]:hidden'>Games Library</span>
       </SidebarHeader>
 
       <SidebarContent>
@@ -64,10 +62,7 @@ function GamesSidebar({ platforms }: IGamesSidebar) {
             <SidebarMenu>
               {platforms.map((platform) => (
                 <SidebarMenuItem key={platform}>
-                  <SidebarMenuButton
-                    onClick={() => handlePlatformClick(platform)}
-                    tooltip={platform}
-                  >
+                  <SidebarMenuButton onClick={() => handlePlatformClick(platform)} tooltip={platform}>
                     <span>{platform}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -85,9 +80,7 @@ function GamesSidebar({ platforms }: IGamesSidebar) {
           onClick={handleRescan}
           disabled={isRescanning}
         >
-          <RotateCwIcon
-            className={`size-4 shrink-0 ${isRescanning ? 'animate-spin' : ''}`}
-          />
+          <RotateCwIcon className={`size-4 shrink-0 ${isRescanning ? 'animate-spin' : ''}`} />
           <span className='group-data-[collapsible=icon]:hidden'>Rescan</span>
         </Button>
       </SidebarFooter>

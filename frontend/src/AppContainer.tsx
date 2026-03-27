@@ -33,13 +33,7 @@ function AppContainer() {
     );
   }, []); // eslint-disable-line react-hooks/exhaustive-deps -- dispatch is stable
 
-  return (
-    <App
-      isLoading={isLoading !== false}
-      isError={isError === true}
-      games={gamesByPlatform}
-    />
-  );
+  return <App isLoading={isLoading !== false} isError={isError === true} games={gamesByPlatform} />;
 }
 
 export default AppContainer;

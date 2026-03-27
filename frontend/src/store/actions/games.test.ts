@@ -1,13 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-  GAMES_LOAD_FAILURE,
-  GAMES_LOAD_START,
-  GAMES_LOAD_SUCCESS,
-  gamesLoadFailure,
-  gamesLoadStart,
-  gamesLoadSuccess,
-} from './games';
+import { GAMES_LOAD_FAILURE, GAMES_LOAD_START, GAMES_LOAD_SUCCESS, gamesLoadFailure, gamesLoadStart, gamesLoadSuccess } from './games';
 
 describe('games action creators', () => {
   describe('gamesLoadStart', () => {

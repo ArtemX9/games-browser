@@ -1,9 +1,4 @@
-import {
-  getGamesURL,
-  getIgdbSearchURL,
-  getRescanURL,
-  getUpdateGameURL,
-} from '@/api/routes';
+import { getGamesURL, getIgdbSearchURL, getRescanURL, getUpdateGameURL } from '@/api/routes';
 import { IgdbSearchResult } from '@/api/types';
 
 export const defaultFetchSettings: RequestInit = {
@@ -15,10 +10,7 @@ export const defaultFetchSettings: RequestInit = {
   },
 };
 
-export const getFetchSettings = (
-  method = 'GET',
-  data: FormData | Record<string, unknown> | null = null,
-) => {
+export const getFetchSettings = (method = 'GET', data: FormData | Record<string, unknown> | null = null) => {
   const settings = {
     ...defaultFetchSettings,
     headers: { ...defaultFetchSettings.headers },
@@ -70,16 +62,12 @@ const apiFetch = <T = unknown>(
   options: FetchOptions | null = {},
   customSettings: FetchOptions | null = null,
 ) => {
-  const settings = customSettings
-    ? customSettings
-    : { ...getFetchSettings(method, body), ...options };
+  const settings = customSettings ? customSettings : { ...getFetchSettings(method, body), ...options };
   const startTime = new Date().getTime();
   return fetch(url, settings)
     .then((response) => {
       const status = response.status;
-      const isJson = response.headers
-        .get('content-type')
-        ?.includes('application/json');
+      const isJson = response.headers.get('content-type')?.includes('application/json');
       if (response.ok && isJson) {
         return response.json().then((json) => [response, status, json]);
       }
@@ -90,12 +78,7 @@ const apiFetch = <T = unknown>(
       if (response.ok) {
         return value as T;
       }
-      throw new ApiException(
-        String(response.status),
-        String(value),
-        url,
-        method,
-      );
+      throw new ApiException(String(response.status), String(value), url, method);
     })
     .catch((error) => {
       if (options?.withAbortRethrow) {
@@ -144,9 +127,5 @@ export const updateGame = async (
   },
 ) => {
   const url = getUpdateGameURL(platform, gameFolder);
-  return await apiFetch(
-    url,
-    'PATCH',
-    data as unknown as Record<string, unknown>,
-  );
+  return await apiFetch(url, 'PATCH', data as unknown as Record<string, unknown>);
 };

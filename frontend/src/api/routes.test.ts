@@ -17,15 +17,11 @@ describe('API routes', () => {
     });
 
     it('URL-encodes spaces', () => {
-      expect(getDownloadURL('PS 2', 'Shadow of the Colossus')).toBe(
-        '/api/download/PS%202/Shadow%20of%20the%20Colossus',
-      );
+      expect(getDownloadURL('PS 2', 'Shadow of the Colossus')).toBe('/api/download/PS%202/Shadow%20of%20the%20Colossus');
     });
 
     it('URL-encodes special characters', () => {
-      expect(getDownloadURL('Xbox 360', 'Halo 3')).toBe(
-        '/api/download/Xbox%20360/Halo%203',
-      );
+      expect(getDownloadURL('Xbox 360', 'Halo 3')).toBe('/api/download/Xbox%20360/Halo%203');
     });
   });
 });

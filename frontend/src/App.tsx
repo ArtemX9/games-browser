@@ -10,11 +10,7 @@ import PlatformSection from '@/components/PlatformSection/PlatformSection';
 import ModeToggle from '@/components/ThemeProvider/ModeToggle';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from '@/components/ui/sidebar';
+import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Game } from '@/store/reducers/games/types';
 
@@ -46,9 +42,7 @@ function App({ isLoading, isError, games }: IApp) {
 
   // 7. Event handlers
   function handleToggleViewMode() {
-    setViewMode((prev) =>
-      prev === ViewMode.CARDS ? ViewMode.TILES : ViewMode.CARDS,
-    );
+    setViewMode((prev) => (prev === ViewMode.CARDS ? ViewMode.TILES : ViewMode.CARDS));
   }
 
   function handleEditGameModalOpenClick({ shortName, game }: GameInfo) {
@@ -103,17 +97,9 @@ function App({ isLoading, isError, games }: IApp) {
               variant='ghost'
               size='icon'
               onClick={handleToggleViewMode}
-              title={
-                viewMode === ViewMode.CARDS
-                  ? 'Switch to tiles view'
-                  : 'Switch to cards view'
-              }
+              title={viewMode === ViewMode.CARDS ? 'Switch to tiles view' : 'Switch to cards view'}
             >
-              {viewMode === ViewMode.CARDS ? (
-                <LayoutGridIcon className='size-4' />
-              ) : (
-                <LayoutListIcon className='size-4' />
-              )}
+              {viewMode === ViewMode.CARDS ? <LayoutGridIcon className='size-4' /> : <LayoutListIcon className='size-4' />}
             </Button>
             <ModeToggle />
           </div>
@@ -121,15 +107,8 @@ function App({ isLoading, isError, games }: IApp) {
 
         <main className='py-6 px-4 md:px-8'>
           {platforms.map((platform) => (
-            <PlatformSection
-              key={platform}
-              platform={platform}
-              gameCount={games[platform].length}
-              sectionId={platformToId(platform)}
-            >
-              <div className='flex flex-wrap items-stretch justify-center gap-6'>
-                {games[platform].map(renderGameCard)}
-              </div>
+            <PlatformSection key={platform} platform={platform} gameCount={games[platform].length} sectionId={platformToId(platform)}>
+              <div className='flex flex-wrap items-stretch justify-center gap-6'>{games[platform].map(renderGameCard)}</div>
             </PlatformSection>
           ))}
 
@@ -142,12 +121,7 @@ function App({ isLoading, isError, games }: IApp) {
             />
           )}
 
-          {!!gameDetail && (
-            <GameDetailModal
-              game={gameDetail.game}
-              onClose={handleCloseGameTileClick}
-            />
-          )}
+          {!!gameDetail && <GameDetailModal game={gameDetail.game} onClose={handleCloseGameTileClick} />}
 
           {platforms.length === 0 && renderNoGames()}
         </main>
@@ -168,13 +142,7 @@ function App({ isLoading, isError, games }: IApp) {
       );
     }
 
-    return (
-      <GameTile
-        key={game.displayName}
-        game={game}
-        onOpenGameTileClick={handleOpenGameTileClick}
-      />
-    );
+    return <GameTile key={game.displayName} game={game} onOpenGameTileClick={handleOpenGameTileClick} />;
   }
 
   function renderNoGames() {
@@ -185,8 +153,7 @@ function App({ isLoading, isError, games }: IApp) {
         </CardHeader>
         <CardContent className='pt-2'>
           <p className='text-muted-foreground'>
-            Make sure your game folders contain <code>thumbnail.png</code>,{' '}
-            <code>icon.png</code> and <code>description.txt</code>.
+            Make sure your game folders contain <code>thumbnail.png</code>, <code>icon.png</code> and <code>description.txt</code>.
           </p>
         </CardContent>
       </Card>

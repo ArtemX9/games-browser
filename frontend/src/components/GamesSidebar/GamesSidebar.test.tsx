@@ -65,9 +65,7 @@ describe('GamesSidebar', () => {
     const { toast } = await import('sonner');
     renderSidebar();
     await userEvent.click(screen.getByRole('button', { name: /rescan/i }));
-    await waitFor(() =>
-      expect(toast.success).toHaveBeenCalledWith('Rescan complete'),
-    );
+    await waitFor(() => expect(toast.success).toHaveBeenCalledWith('Rescan complete'));
   });
 
   it('scrolls to the correct section on platform click', async () => {

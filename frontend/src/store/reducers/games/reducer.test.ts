@@ -1,11 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, expect, it } from 'vitest';
 
-import {
-  GAMES_LOAD_FAILURE,
-  GAMES_LOAD_START,
-  GAMES_LOAD_SUCCESS,
-} from '@/store/actions/games';
+import { GAMES_LOAD_FAILURE, GAMES_LOAD_START, GAMES_LOAD_SUCCESS } from '@/store/actions/games';
 import { Game } from '@/store/reducers/games/types';
 
 import { GamesReducer, IGamesReducer } from './reducer';

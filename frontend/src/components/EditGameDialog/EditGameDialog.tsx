@@ -15,12 +15,7 @@ interface IEditGameDialog {
   onClose: () => void;
 }
 
-function EditGameDialog({
-  gameName,
-  platform,
-  gameFolder,
-  onClose,
-}: IEditGameDialog) {
+function EditGameDialog({ gameName, platform, gameFolder, onClose }: IEditGameDialog) {
   // 2. Redux hooks
   const dispatch = useAppDispatch();
 
@@ -58,11 +53,8 @@ function EditGameDialog({
   async function handleDone() {
     if (!selected) return;
     setIsSaving(true);
-    const customDisplayName =
-      searchTitle !== gameName ? searchTitle : undefined;
-    await dispatch(
-      updateGameData({ platform, gameFolder, selected, customDisplayName }),
-    );
+    const customDisplayName = searchTitle !== gameName ? searchTitle : undefined;
+    await dispatch(updateGameData({ platform, gameFolder, selected, customDisplayName }));
     setIsSaving(false);
     onClose();
   }
@@ -73,10 +65,7 @@ function EditGameDialog({
 
   // 9. Main return
   return (
-    <div
-      className='fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4'
-      onClick={handleOverlayClick}
-    >
+    <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4' onClick={handleOverlayClick}>
       <div className='bg-background border rounded-xl shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col'>
         {renderHeader()}
 
@@ -90,13 +79,10 @@ function EditGameDialog({
           )}
 
           {!isLoading && results.length === 0 && (
-            <div className='py-12 text-center text-sm text-muted-foreground'>
-              No results found on IGDB for this game and platform.
-            </div>
+            <div className='py-12 text-center text-sm text-muted-foreground'>No results found on IGDB for this game and platform.</div>
           )}
 
-          {!isLoading &&
-            results.map((result, idx) => renderResult(result, idx))}
+          {!isLoading && results.map((result, idx) => renderResult(result, idx))}
         </div>
 
         {/* Footer */}
@@ -119,9 +105,7 @@ function EditGameDialog({
       <div className='flex items-start justify-between px-5 py-4 border-b gap-3 relative'>
         <div className='flex-1 min-w-0'>
           <h2 className='font-semibold text-base'>Select matching game</h2>
-          <p className='text-sm text-muted-foreground mt-0.5 mb-2 truncate'>
-            {gameFolder}
-          </p>
+          <p className='text-sm text-muted-foreground mt-0.5 mb-2 truncate'>{gameFolder}</p>
           <div className='flex gap-2'>
             <Input
               value={searchTitle}
@@ -130,23 +114,13 @@ function EditGameDialog({
               placeholder='Game title…'
               className='h-8 text-sm'
             />
-            <Button
-              variant='outline'
-              size='sm'
-              onClick={handleSearch}
-              disabled={isLoading || !searchTitle.trim()}
-            >
+            <Button variant='outline' size='sm' onClick={handleSearch} disabled={isLoading || !searchTitle.trim()}>
               <SearchIcon className='size-3.5 mr-1.5' />
               Search
             </Button>
           </div>
         </div>
-        <Button
-          variant='ghost'
-          size='icon'
-          className='shrink-0 absolute right-5 top-4 w-4 h-4'
-          onClick={onClose}
-        >
+        <Button variant='ghost' size='icon' className='shrink-0 absolute right-5 top-4 w-4 h-4' onClick={onClose}>
           <XIcon className='size-4' />
         </Button>
       </div>
@@ -159,9 +133,7 @@ function EditGameDialog({
       <button
         key={idx}
         className={`w-full flex gap-3 p-3 rounded-lg border text-left transition-colors cursor-pointer ${
-          isSelected
-            ? 'border-primary bg-primary/5'
-            : 'border-border hover:border-primary/40 hover:bg-muted/30'
+          isSelected ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/40 hover:bg-muted/30'
         }`}
         onClick={() => setSelected(result)}
       >
@@ -177,30 +149,18 @@ function EditGameDialog({
               }}
             />
           ) : (
-            <div className='w-full h-full flex items-center justify-center text-xs text-muted-foreground'>
-              No image
-            </div>
+            <div className='w-full h-full flex items-center justify-center text-xs text-muted-foreground'>No image</div>
           )}
         </div>
 
         {/* Info */}
         <div className='flex-1 min-w-0'>
           <div className='flex items-start justify-between gap-2'>
-            <span className='font-medium text-sm leading-snug'>
-              {result.name}
-            </span>
-            {isSelected && (
-              <CheckIcon className='size-4 text-primary shrink-0 mt-0.5' />
-            )}
+            <span className='font-medium text-sm leading-snug'>{result.name}</span>
+            {isSelected && <CheckIcon className='size-4 text-primary shrink-0 mt-0.5' />}
           </div>
-          <div className='text-xs text-muted-foreground mt-0.5'>
-            {[result.releaseDate, result.platforms].filter(Boolean).join(' · ')}
-          </div>
-          {result.description && (
-            <p className='text-xs text-muted-foreground mt-1.5 line-clamp-2'>
-              {result.description}
-            </p>
-          )}
+          <div className='text-xs text-muted-foreground mt-0.5'>{[result.releaseDate, result.platforms].filter(Boolean).join(' · ')}</div>
+          {result.description && <p className='text-xs text-muted-foreground mt-1.5 line-clamp-2'>{result.description}</p>}
         </div>
       </button>
     );

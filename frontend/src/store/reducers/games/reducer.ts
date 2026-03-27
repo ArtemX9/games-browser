@@ -28,10 +28,7 @@ type GamesActionTypes =
   | ReturnType<typeof gamesLoadFailure>
   | ReturnType<typeof gameUpdateSuccess>;
 
-export const GamesReducer = (
-  state = defaultAppState,
-  action: GamesActionTypes,
-) => {
+export const GamesReducer = (state = defaultAppState, action: GamesActionTypes) => {
   switch (action.type) {
     case GAMES_LOAD_START:
       return {
@@ -61,8 +58,7 @@ export const GamesReducer = (
       return {
         ...state,
         games: (state.games ?? []).map((g) =>
-          g.gameFolder === typedAction.payload.gameFolder &&
-          g.platform === typedAction.payload.platform
+          g.gameFolder === typedAction.payload.gameFolder && g.platform === typedAction.payload.platform
             ? {
                 ...g,
                 displayName: typedAction.payload.displayName,

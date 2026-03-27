@@ -54,14 +54,8 @@ describe('useIsMobile', () => {
 
   it('registers and cleans up a matchMedia change listener', () => {
     const { unmount } = renderHook(() => useIsMobile());
-    expect(addEventListenerSpy).toHaveBeenCalledWith(
-      'change',
-      expect.any(Function),
-    );
+    expect(addEventListenerSpy).toHaveBeenCalledWith('change', expect.any(Function));
     unmount();
-    expect(removeEventListenerSpy).toHaveBeenCalledWith(
-      'change',
-      expect.any(Function),
-    );
+    expect(removeEventListenerSpy).toHaveBeenCalledWith('change', expect.any(Function));
   });
 });

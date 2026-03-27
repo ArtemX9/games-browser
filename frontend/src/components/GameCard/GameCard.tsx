@@ -51,12 +51,8 @@ function GameCard({ game, className, onEditGameModalOpenClick }: IGameCard) {
       </div>
 
       <CardContent className='pt-2 pb-0 px-5 flex-1 overflow-hidden'>
-        <h3 className='font-semibold text-lg leading-tight line-clamp-2 mb-2.5'>
-          {shortName}
-        </h3>
-        <p className='text-sm text-muted-foreground line-clamp-4'>
-          {game.description}
-        </p>
+        <h3 className='font-semibold text-lg leading-tight line-clamp-2 mb-2.5'>{shortName}</h3>
+        <p className='text-sm text-muted-foreground line-clamp-4'>{game.description}</p>
       </CardContent>
 
       <CardFooter className='px-5 pb-2'>

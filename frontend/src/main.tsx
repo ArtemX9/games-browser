@@ -9,10 +9,7 @@ import '@/index.css';
 import store from '@/store/store';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <ThemeProvider
-    defaultTheme={DEFAULT_COLOR_THEME}
-    storageKey={THEME_STORAGE_KEY}
-  >
+  <ThemeProvider defaultTheme={DEFAULT_COLOR_THEME} storageKey={THEME_STORAGE_KEY}>
     <Provider store={store}>
       <AppContainer />
       <Toaster />

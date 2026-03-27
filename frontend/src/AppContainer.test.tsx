@@ -1,14 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import {
-  afterAll,
-  afterEach,
-  beforeAll,
-  describe,
-  expect,
-  it,
-  vi,
-} from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 
 import { ThemeProvider } from '@/components/ThemeProvider/ThemeProvider';
 import { storeCreator } from '@/store/store';
@@ -94,11 +86,7 @@ describe('AppContainer (integration)', () => {
 
   it('shows error state when API returns 500', async () => {
     const { http, HttpResponse } = await import('msw');
-    server.use(
-      http.get('/api/games', () =>
-        HttpResponse.json({ error: 'Server error' }, { status: 500 }),
-      ),
-    );
+    server.use(http.get('/api/games', () => HttpResponse.json({ error: 'Server error' }, { status: 500 })));
 
     renderAppContainer();
     await waitFor(() => {

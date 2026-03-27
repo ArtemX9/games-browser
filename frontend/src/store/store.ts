@@ -6,11 +6,7 @@ import rootReducer from './reducers';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const storeCreator = (preloadedState: any = {}) => {
-  return createStore(
-    rootReducer,
-    preloadedState,
-    composeWithDevTools(applyMiddleware(thunkMiddleware)),
-  );
+  return createStore(rootReducer, preloadedState, composeWithDevTools(applyMiddleware(thunkMiddleware)));
 };
 
 /**

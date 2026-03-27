@@ -2,11 +2,7 @@ import { ChevronDownIcon } from 'lucide-react';
 import { useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { cn } from '@/lib/utils';
 
 const STORAGE_KEY = 'games-browser:collapsed-platforms';
@@ -35,12 +31,7 @@ interface IPlatformSection {
   children: React.ReactNode;
 }
 
-function PlatformSection({
-  platform,
-  gameCount,
-  sectionId,
-  children,
-}: IPlatformSection) {
+function PlatformSection({ platform, gameCount, sectionId, children }: IPlatformSection) {
   // 4. State
   const [isOpen, setIsOpen] = useState<boolean>(() => {
     const stored = readCollapsedState();
@@ -66,9 +57,7 @@ function PlatformSection({
       <section id={sectionId} className='mb-14 scroll-mt-4'>
         <CollapsibleTrigger asChild>
           <button className='flex items-center gap-3 mb-6 w-full text-left group cursor-pointer bg-transparent border-0 p-0'>
-            <h2 className='text-2xl md:text-3xl font-semibold tracking-tight'>
-              {platform}
-            </h2>
+            <h2 className='text-2xl md:text-3xl font-semibold tracking-tight'>{platform}</h2>
             <Badge variant='secondary' className='text-base px-3 py-1'>
               {gameCount}
             </Badge>

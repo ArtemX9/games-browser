@@ -2,12 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import * as api from '@/api/api';
 import { IgdbSearchResult } from '@/api/types';
-import {
-  GAMES_LOAD_FAILURE,
-  GAMES_LOAD_START,
-  GAMES_LOAD_SUCCESS,
-  GAME_UPDATE_SUCCESS,
-} from '@/store/actions/games';
+import { GAMES_LOAD_FAILURE, GAMES_LOAD_START, GAMES_LOAD_SUCCESS, GAME_UPDATE_SUCCESS } from '@/store/actions/games';
 
 import { fetchGamesList, updateGameData } from './games';
 
@@ -76,9 +71,7 @@ describe('fetchGamesList thunk', () => {
     await fetchGamesList({ offset: 0, limit: 10 })(dispatch, getState);
 
     const successPayload = dispatch.mock.calls[1][0].payload;
-    expect(successPayload.games[0].displayName).toBe(
-      'PS 2 — Shadow of the Colossus',
-    );
+    expect(successPayload.games[0].displayName).toBe('PS 2 — Shadow of the Colossus');
     expect(successPayload.games[0].gameFolder).toBe('Shadow of the Colossus');
     expect(successPayload.games[0].releaseDate).toBe('2005');
     expect(successPayload.games[0].igdbPlatforms).toBe('PlayStation 2');
@@ -89,9 +82,7 @@ describe('fetchGamesList thunk', () => {
   });
 
   it('dispatches GAMES_LOAD_START then GAMES_LOAD_FAILURE on error', async () => {
-    vi.spyOn(api, 'fetchGamesList').mockRejectedValue(
-      new Error('Network error'),
-    );
+    vi.spyOn(api, 'fetchGamesList').mockRejectedValue(new Error('Network error'));
 
     await fetchGamesList({ offset: 0, limit: 10 })(dispatch, getState);
 
@@ -153,11 +144,7 @@ describe('updateGameData thunk', () => {
       customDisplayName: 'Custom Title',
     })(dispatch, getState);
 
-    expect(api.updateGame).toHaveBeenCalledWith(
-      'Win',
-      'Hades',
-      expect.objectContaining({ displayName: 'Custom Title' }),
-    );
+    expect(api.updateGame).toHaveBeenCalledWith('Win', 'Hades', expect.objectContaining({ displayName: 'Custom Title' }));
   });
 
   it('dispatches GAME_UPDATE_SUCCESS with correct fields', async () => {

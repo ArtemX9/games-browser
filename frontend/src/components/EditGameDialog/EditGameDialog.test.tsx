@@ -35,14 +35,10 @@ const defaultProps = {
 };
 
 // Waits for the initial search to finish (Search button becomes enabled)
-const waitForSearchReady = () =>
-  waitFor(() =>
-    expect(screen.getByRole('button', { name: /search/i })).not.toBeDisabled(),
-  );
+const waitForSearchReady = () => waitFor(() => expect(screen.getByRole('button', { name: /search/i })).not.toBeDisabled());
 
 // Clicks the result item (a button whose accessible name includes the result name)
-const clickResult = (name: RegExp | string) =>
-  fireEvent.click(screen.getByRole('button', { name }));
+const clickResult = (name: RegExp | string) => fireEvent.click(screen.getByRole('button', { name }));
 
 describe('EditGameDialog', () => {
   beforeEach(() => {
@@ -70,9 +66,7 @@ describe('EditGameDialog', () => {
   it('shows search results after load', async () => {
     render(<EditGameDialog {...defaultProps} />);
     await waitFor(() => {
-      expect(
-        screen.getByText('A rogue-like dungeon crawler.'),
-      ).toBeInTheDocument();
+      expect(screen.getByText('A rogue-like dungeon crawler.')).toBeInTheDocument();
     });
   });
 
@@ -113,9 +107,7 @@ describe('EditGameDialog', () => {
     fireEvent.click(screen.getByRole('button', { name: /done/i }));
 
     await waitFor(() => {
-      expect(gamesThunks.updateGameData).toHaveBeenCalledWith(
-        expect.objectContaining({ customDisplayName: 'Custom Title' }),
-      );
+      expect(gamesThunks.updateGameData).toHaveBeenCalledWith(expect.objectContaining({ customDisplayName: 'Custom Title' }));
     });
   });
 
@@ -127,9 +119,7 @@ describe('EditGameDialog', () => {
     fireEvent.click(screen.getByRole('button', { name: /done/i }));
 
     await waitFor(() => {
-      expect(gamesThunks.updateGameData).toHaveBeenCalledWith(
-        expect.objectContaining({ customDisplayName: undefined }),
-      );
+      expect(gamesThunks.updateGameData).toHaveBeenCalledWith(expect.objectContaining({ customDisplayName: undefined }));
     });
   });
 

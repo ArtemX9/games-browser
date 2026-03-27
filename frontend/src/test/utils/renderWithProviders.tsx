@@ -10,10 +10,7 @@ interface RenderWithProvidersOptions extends Omit<RenderOptions, 'wrapper'> {
   preloadedState?: Partial<IApplicationState>;
 }
 
-export function renderWithProviders(
-  ui: ReactNode,
-  { preloadedState, ...renderOptions }: RenderWithProvidersOptions = {},
-) {
+export function renderWithProviders(ui: ReactNode, { preloadedState, ...renderOptions }: RenderWithProvidersOptions = {}) {
   const store = storeCreator(preloadedState);
 
   function Wrapper({ children }: { children: ReactNode }) {

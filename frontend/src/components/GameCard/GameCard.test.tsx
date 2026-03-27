@@ -38,9 +38,7 @@ describe('GameCard', () => {
 
   it('renders the game description', () => {
     render(<GameCard game={baseGame} />);
-    expect(
-      screen.getByText('A rogue-like dungeon crawler.'),
-    ).toBeInTheDocument();
+    expect(screen.getByText('A rogue-like dungeon crawler.')).toBeInTheDocument();
   });
 
   it('renders download link with correct href', () => {
@@ -64,19 +62,13 @@ describe('GameCard', () => {
     };
     render(<GameCard game={game} />);
     const link = screen.getByRole('link', { name: /download/i });
-    expect(link).toHaveAttribute(
-      'href',
-      '/api/download/PS%202/Shadow%20of%20the%20Colossus',
-    );
+    expect(link).toHaveAttribute('href', '/api/download/PS%202/Shadow%20of%20the%20Colossus');
   });
 
   it('falls back to placeholder image on img error', () => {
     render(<GameCard game={baseGame} />);
     const img = screen.getByRole('img', { name: 'Hades' });
     fireEvent.error(img);
-    expect(img).toHaveAttribute(
-      'src',
-      'https://placehold.co/640x360?text=No+Image',
-    );
+    expect(img).toHaveAttribute('src', 'https://placehold.co/640x360?text=No+Image');
   });
 });

@@ -86,9 +86,7 @@
   --low-priority: oklch(0.546 0.245 262.881);
   --medium-priority: oklch(0.681 0.162 75.834);
   --high-priority: oklch(0.646 0.222 41.116);
-  --content-breakout-max-width: calc(
-    var(--content-max-width) + 2 * var(--content-gutter)
-  );
+  --content-breakout-max-width: calc(var(--content-max-width) + 2 * var(--content-gutter));
   --content-max-width: 48rem;
   --content-gutter: 1rem;
 }
