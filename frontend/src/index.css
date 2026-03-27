@@ -149,3 +149,19 @@
 @page {
   size: A4 !important;
 }
+
+/* Collapsible section animation using the CSS grid trick */
+.collapsible-content {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 300ms ease;
+  overflow: hidden;
+}
+
+.collapsible-content[data-state='closed'] {
+  grid-template-rows: 0fr;
+}
+
+.collapsible-content-inner {
+  min-height: 0;
+}

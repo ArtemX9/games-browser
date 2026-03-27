@@ -28,6 +28,7 @@ const makeGame = (overrides: Partial<Game> = {}): Game => ({
   release_date: faker.date.past().getFullYear().toString(),
   genres: faker.helpers.arrayElements(['Action', 'RPG', 'Adventure']).join(', '),
   igdb_platforms: faker.helpers.arrayElement(['PlayStation 2', 'PC (Microsoft Windows)']),
+  manually_matched: 0,
   ...overrides,
 });
 

@@ -3,11 +3,11 @@ import express from 'express';
 import request from 'supertest';
 import { faker } from '@faker-js/faker';
 
-vi.mock('../../db', () => ({ getAllGames: vi.fn(), clearGames: vi.fn(), insertGame: vi.fn() }));
+vi.mock('../../db', () => ({ getAllGames: vi.fn(), updateGame: vi.fn(), insertGame: vi.fn() }));
 vi.mock('../../scanner', () => ({ scanGames: vi.fn() }));
 vi.mock('fs-extra');
 
-import { getAllGames, clearGames } from '../../db';
+import { getAllGames } from '../../db';
 import { scanGames } from '../../scanner';
 import fs from 'fs-extra';
 import { Game } from '../../types';
@@ -15,7 +15,6 @@ import { Game } from '../../types';
 import router from '../../routes/games';
 
 const mockedGetAllGames = vi.mocked(getAllGames);
-const mockedClearGames = vi.mocked(clearGames);
 const mockedScanGames = vi.mocked(scanGames);
 const mockedPathExists = vi.mocked(fs.pathExists);
 
@@ -34,6 +33,7 @@ const makeGame = (overrides: Partial<Game> = {}): Game => ({
   release_date: faker.date.past().getFullYear().toString(),
   genres: 'Action, RPG',
   igdb_platforms: 'PlayStation 2',
+  manually_matched: 0,
   ...overrides,
 });
 
@@ -69,15 +69,13 @@ describe('GET /api/games', () => {
 });
 
 describe('GET /api/rescan', () => {
-  it('calls clearGames and scanGames and returns status', async () => {
-    mockedClearGames.mockResolvedValue();
+  it('calls scanGames and returns status', async () => {
     mockedScanGames.mockResolvedValue();
 
     const res = await request(app).get('/api/rescan');
 
     expect(res.status).toBe(200);
     expect(res.body).toEqual({ status: 'Rescan completed' });
-    expect(mockedClearGames).toHaveBeenCalledTimes(1);
     expect(mockedScanGames).toHaveBeenCalledTimes(1);
   });
 });

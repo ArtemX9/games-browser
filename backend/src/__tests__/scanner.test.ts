@@ -2,11 +2,15 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { faker } from '@faker-js/faker';
 
 vi.mock('fs-extra');
-vi.mock('../db', () => ({ insertGame: vi.fn(), clearGames: vi.fn(), getAllGames: vi.fn() }));
+vi.mock('../db', () => ({
+  insertGame: vi.fn(),
+  deleteOrphanedGames: vi.fn().mockResolvedValue(undefined),
+  getGameByPath: vi.fn().mockResolvedValue(null),
+}));
 vi.mock('../igdb', () => ({ searchGame: vi.fn() }));
 
 import fs from 'fs-extra';
-import { clearGames, insertGame } from '../db';
+import { deleteOrphanedGames, getGameByPath, insertGame } from '../db';
 import { searchGame } from '../igdb';
 import { scanGames } from '../scanner';
 import { IgdbGameData } from '../types';
@@ -17,6 +21,8 @@ const mockedPathExists = vi.mocked(fs.pathExists);
 const mockedReadFile = vi.mocked(fs.readFile);
 const mockedInsertGame = vi.mocked(insertGame);
 const mockedSearchGame = vi.mocked(searchGame);
+const mockedDeleteOrphanedGames = vi.mocked(deleteOrphanedGames);
+const mockedGetGameByPath = vi.mocked(getGameByPath);
 
 const makeIgdbData = (overrides: Partial<IgdbGameData> = {}): IgdbGameData => ({
   name: faker.commerce.productName(),
@@ -38,6 +44,8 @@ describe('scanGames', () => {
     mockedStat.mockResolvedValue(dirStat);
     mockedPathExists.mockResolvedValue(true as never);
     mockedReadFile.mockResolvedValue('Local description' as never);
+    mockedDeleteOrphanedGames.mockResolvedValue(undefined);
+    mockedGetGameByPath.mockResolvedValue(null);
   });
 
   it('calls insertGame with IGDB data when available', async () => {
@@ -117,9 +125,31 @@ describe('scanGames', () => {
     expect(mockedInsertGame.mock.calls[0][1]).toBe(igdbData.thumbnail);
   });
 
-  it('does not call clearGames', async () => {
+  it('calls deleteOrphanedGames with valid paths', async () => {
     mockedSearchGame.mockResolvedValue(null);
     await scanGames();
-    expect(clearGames).not.toHaveBeenCalled();
+    expect(mockedDeleteOrphanedGames).toHaveBeenCalledWith([{ platform, gameFolder }]);
+  });
+
+  it('skips IGDB fetch and preserves data for manually matched games', async () => {
+    const existingGame = {
+      id: 1,
+      display_name: 'Manual Title',
+      thumbnail: 'https://manual.example.com/cover.jpg',
+      icon: `/media/${platform}/${gameFolder}/icon.png`,
+      description: 'Manual description',
+      platform,
+      game_folder: gameFolder,
+      release_date: '2005',
+      genres: 'Action',
+      igdb_platforms: 'PlayStation 2',
+      manually_matched: 1,
+    };
+    mockedGetGameByPath.mockResolvedValue(existingGame as never);
+
+    await scanGames();
+
+    expect(mockedSearchGame).not.toHaveBeenCalled();
+    expect(mockedInsertGame).not.toHaveBeenCalled();
   });
 });

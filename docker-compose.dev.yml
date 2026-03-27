@@ -19,6 +19,7 @@ services:
     image: node:22-alpine
     volumes:
       - ./backend:/app
+      - /app/node_modules
       - ${GAMES_PATH}:/games:ro
     ports:
       - "3001:3001"

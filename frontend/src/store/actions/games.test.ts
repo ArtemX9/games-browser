@@ -29,6 +29,9 @@ describe('games action creators', () => {
           icon: '',
           description: '',
           gameFolder: 'Hades',
+          releaseDate: '',
+          genres: '',
+          igdbPlatforms: '',
         },
       ];
       const action = gamesLoadSuccess({ games });

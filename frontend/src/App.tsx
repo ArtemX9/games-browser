@@ -1,7 +1,12 @@
+import { LayoutGridIcon, LayoutListIcon } from 'lucide-react';
+import { useState } from 'react';
+
 import GameCard from '@/components/GameCard/GameCard';
+import GameTile from '@/components/GameTile/GameTile';
 import GamesSidebar from '@/components/GamesSidebar/GamesSidebar';
+import PlatformSection from '@/components/PlatformSection/PlatformSection';
 import ModeToggle from '@/components/ThemeProvider/ModeToggle';
-import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   SidebarInset,
@@ -10,6 +15,8 @@ import {
 } from '@/components/ui/sidebar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Game } from '@/store/reducers/games/types';
+
+type ViewMode = 'cards' | 'tiles';
 
 interface IApp {
   isLoading: boolean;
@@ -22,6 +29,15 @@ function platformToId(platform: string): string {
 }
 
 function App({ isLoading, isError, games }: IApp) {
+  // 4. State
+  const [viewMode, setViewMode] = useState<ViewMode>('cards');
+
+  // 7. Event handlers
+  function handleToggleViewMode() {
+    setViewMode((prev) => (prev === 'cards' ? 'tiles' : 'cards'));
+  }
+
+  // 8. Early returns
   if (isError) {
     return <div>Error</div>;
   }
@@ -41,6 +57,7 @@ function App({ isLoading, isError, games }: IApp) {
 
   const platforms = Object.keys(games);
 
+  // 9. Main return
   return (
     <SidebarProvider>
       <GamesSidebar platforms={platforms} />
@@ -48,35 +65,53 @@ function App({ isLoading, isError, games }: IApp) {
         <header className='flex items-center justify-between px-4 py-3 border-b'>
           <SidebarTrigger className='-ml-1' />
           <h1 className='text-xl font-bold tracking-tight'>Games Library</h1>
-          <ModeToggle />
+          <div className='flex items-center gap-2'>
+            <Button
+              variant='ghost'
+              size='icon'
+              onClick={handleToggleViewMode}
+              title={
+                viewMode === 'cards'
+                  ? 'Switch to tiles view'
+                  : 'Switch to cards view'
+              }
+            >
+              {viewMode === 'cards' ? (
+                <LayoutGridIcon className='size-4' />
+              ) : (
+                <LayoutListIcon className='size-4' />
+              )}
+            </Button>
+            <ModeToggle />
+          </div>
         </header>
 
         <main className='py-6 px-4 md:px-8'>
           {platforms.map((platform) => (
-            <section
+            <PlatformSection
               key={platform}
-              id={platformToId(platform)}
-              className='mb-14 scroll-mt-4'
+              platform={platform}
+              gameCount={games[platform].length}
+              sectionId={platformToId(platform)}
             >
-              <div className='flex items-center gap-3 mb-6'>
-                <h2 className='text-2xl md:text-3xl font-semibold tracking-tight'>
-                  {platform}
-                </h2>
-                <Badge variant='secondary' className='text-base px-3 py-1'>
-                  {games[platform].length}
-                </Badge>
-              </div>
-
-              <div className='flex flex-wrap items-center justify-center gap-6'>
-                {games[platform].map((game) => (
-                  <GameCard
-                    key={game.displayName}
-                    game={game}
-                    className='last:justify-start'
-                  />
-                ))}
-              </div>
-            </section>
+              {viewMode === 'cards' ? (
+                <div className='flex flex-wrap items-center justify-center gap-6'>
+                  {games[platform].map((game) => (
+                    <GameCard
+                      key={game.displayName}
+                      game={game}
+                      className='last:justify-start'
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className='flex flex-wrap gap-3'>
+                  {games[platform].map((game) => (
+                    <GameTile key={game.displayName} game={game} />
+                  ))}
+                </div>
+              )}
+            </PlatformSection>
           ))}
 
           {platforms.length === 0 && renderNoGames()}
@@ -85,6 +120,7 @@ function App({ isLoading, isError, games }: IApp) {
     </SidebarProvider>
   );
 
+  // 10. Render helpers
   function renderNoGames() {
     return (
       <Card className='mx-auto max-w-md text-center p-8'>

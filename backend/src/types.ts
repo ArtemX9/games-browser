@@ -9,6 +9,7 @@ export interface Game {
   release_date: string;
   genres: string;
   igdb_platforms: string;
+  manually_matched: number;
 }
 
 export interface IgdbGameData {

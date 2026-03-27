@@ -4,7 +4,7 @@ import archiver from 'archiver';
 import { Router } from 'express';
 import fs from 'fs-extra';
 
-import { clearGames, getAllGames, updateGame } from '../db';
+import { getAllGames, updateGame } from '../db';
 import { searchGames } from '../igdb';
 import { scanGames } from '../scanner';
 
@@ -22,9 +22,12 @@ router.get('/games', async (req, res) => {
 });
 
 router.get('/rescan', async (req, res) => {
-    await clearGames();
-    await scanGames();
-    res.json({ status: 'Rescan completed' });
+    try {
+        await scanGames();
+        res.json({ status: 'Rescan completed' });
+    } catch (err) {
+        res.status(500).json({ error: `Failed to rescan games ${err}` });
+    }
 });
 
 router.get('/igdb-search', async (req, res) => {
@@ -33,8 +36,13 @@ router.get('/igdb-search', async (req, res) => {
         res.status(400).json({ error: 'query and platform are required' });
         return;
     }
-    const results = await searchGames(query, platform);
-    res.json(results);
+    try {
+        const results = await searchGames(query, platform);
+        res.json(results);
+    } catch (err) {
+        res.status(500).json({ error: `Failed to fetch games from IDGB ${err}` });
+    }
+
 });
 
 router.patch('/games/:platform/:gameFolder', async (req, res) => {

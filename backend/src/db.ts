@@ -17,9 +17,14 @@ db.serialize(() => {
                                              game_folder TEXT,
                                              release_date TEXT,
                                              genres TEXT,
-                                             igdb_platforms TEXT
+                                             igdb_platforms TEXT,
+                                             manually_matched INTEGER DEFAULT 0
         )
     `);
+    // Migration: add manually_matched column if it doesn't exist yet
+    db.run(`ALTER TABLE games ADD COLUMN manually_matched INTEGER DEFAULT 0`, () => {
+        // Ignore errors — column already exists in up-to-date DBs
+    });
 });
 
 export const insertGame = (
@@ -53,9 +58,45 @@ export const updateGame = (
 ): Promise<void> => {
     return new Promise((resolve, reject) => {
         db.run(
-            `UPDATE games SET display_name=?, thumbnail=?, description=?, release_date=?, genres=?, igdb_platforms=?
+            `UPDATE games SET display_name=?, thumbnail=?, description=?, release_date=?, genres=?, igdb_platforms=?, manually_matched=1
              WHERE game_folder=? AND platform=?`,
             [displayName, thumbnail, description, releaseDate, genres, igdbPlatforms, gameFolder, platform],
+            (err) => {
+                if (err) reject(err);
+                else resolve();
+            }
+        );
+    });
+};
+
+export const getGameByPath = (platform: string, gameFolder: string): Promise<Game | null> => {
+    return new Promise((resolve, reject) => {
+        db.get(
+            'SELECT * FROM games WHERE platform=? AND game_folder=?',
+            [platform, gameFolder],
+            (err, row) => {
+                if (err) reject(err);
+                else resolve((row as Game) ?? null);
+            }
+        );
+    });
+};
+
+export const deleteOrphanedGames = (validPaths: Array<{ platform: string; gameFolder: string }>): Promise<void> => {
+    return new Promise((resolve, reject) => {
+        if (validPaths.length === 0) {
+            // No valid paths means all games are orphaned — clear everything
+            db.run('DELETE FROM games', (err) => {
+                if (err) reject(err);
+                else resolve();
+            });
+            return;
+        }
+        const placeholders = validPaths.map(() => '(?,?)').join(',');
+        const params = validPaths.flatMap(({ platform, gameFolder }) => [platform, gameFolder]);
+        db.run(
+            `DELETE FROM games WHERE (platform, game_folder) NOT IN (${placeholders})`,
+            params,
             (err) => {
                 if (err) reject(err);
                 else resolve();
