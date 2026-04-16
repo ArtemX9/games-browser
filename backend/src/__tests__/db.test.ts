@@ -3,16 +3,18 @@ import { faker } from '@faker-js/faker';
 
 import { Game } from '../types';
 
-const mockRun = vi.hoisted(() => vi.fn());
-const mockAll = vi.hoisted(() => vi.fn());
-const mockSerialize = vi.hoisted(() => vi.fn((cb: (() => void) | undefined) => cb && cb()));
+const mockUpsert = vi.hoisted(() => vi.fn());
+const mockDeleteMany = vi.hoisted(() => vi.fn());
+const mockFindMany = vi.hoisted(() => vi.fn());
 
-vi.mock('sqlite3', () => ({
-  Database: vi.fn(function (this: Record<string, unknown>) {
-    this.run = mockRun;
-    this.all = mockAll;
-    this.serialize = mockSerialize;
-  }),
+vi.mock('../lib/prisma', () => ({
+  prisma: {
+    games: {
+      upsert: mockUpsert,
+      deleteMany: mockDeleteMany,
+      findMany: mockFindMany,
+    },
+  },
 }));
 
 import { clearGames, getAllGames, insertGame } from '../db';
@@ -28,92 +30,102 @@ const makeGame = (overrides: Partial<Game> = {}): Game => ({
   release_date: faker.date.past().getFullYear().toString(),
   genres: faker.helpers.arrayElements(['Action', 'RPG', 'Adventure']).join(', '),
   igdb_platforms: faker.helpers.arrayElement(['PlayStation 2', 'PC (Microsoft Windows)']),
-  manually_matched: 0,
+  manually_matched: false,
   ...overrides,
 });
 
 describe('db', () => {
   beforeEach(() => {
-    mockRun.mockReset();
-    mockAll.mockReset();
+    mockUpsert.mockReset();
+    mockDeleteMany.mockReset();
+    mockFindMany.mockReset();
   });
 
   describe('insertGame', () => {
-    it('calls db.run with correct SQL and params', () => {
+    it('calls prisma.games.upsert with correct args', async () => {
       const game = makeGame();
-      insertGame(
-        game.display_name,
-        game.thumbnail,
-        game.icon,
-        game.description,
-        game.platform,
-        game.game_folder,
-        game.release_date,
-        game.genres,
-        game.igdb_platforms,
+      mockUpsert.mockResolvedValueOnce(game);
+
+      await insertGame(
+        game.display_name!,
+        game.thumbnail!,
+        game.icon!,
+        game.description!,
+        game.platform!,
+        game.game_folder!,
+        game.release_date!,
+        game.genres!,
+        game.igdb_platforms!,
       );
-      expect(mockRun).toHaveBeenCalledWith(
-        expect.stringContaining('INSERT OR REPLACE INTO games'),
-        [
-          game.display_name,
-          game.thumbnail,
-          game.icon,
-          game.description,
-          game.platform,
-          game.game_folder,
-          game.release_date,
-          game.genres,
-          game.igdb_platforms,
-        ],
-      );
+
+      expect(mockUpsert).toHaveBeenCalledWith({
+        where: { display_name: game.display_name },
+        update: {
+          thumbnail: game.thumbnail,
+          icon: game.icon,
+          description: game.description,
+          platform: game.platform,
+          game_folder: game.game_folder,
+          release_date: game.release_date,
+          genres: game.genres,
+          igdb_platforms: game.igdb_platforms,
+        },
+        create: {
+          display_name: game.display_name,
+          thumbnail: game.thumbnail,
+          icon: game.icon,
+          description: game.description,
+          platform: game.platform,
+          game_folder: game.game_folder,
+          release_date: game.release_date,
+          genres: game.genres,
+          igdb_platforms: game.igdb_platforms,
+        },
+      });
     });
 
-    it('uses empty strings for optional params when not provided', () => {
+    it('uses empty strings for optional params when not provided', async () => {
       const game = makeGame();
-      insertGame(game.display_name, game.thumbnail, game.icon, game.description, game.platform, game.game_folder);
-      expect(mockRun).toHaveBeenCalledWith(
-        expect.stringContaining('INSERT OR REPLACE INTO games'),
-        [game.display_name, game.thumbnail, game.icon, game.description, game.platform, game.game_folder, '', '', ''],
+      mockUpsert.mockResolvedValueOnce(game);
+
+      await insertGame(game.display_name!, game.thumbnail!, game.icon!, game.description!, game.platform!, game.game_folder!);
+
+      expect(mockUpsert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          create: expect.objectContaining({ release_date: '', genres: '', igdb_platforms: '' }),
+        }),
       );
     });
   });
 
   describe('clearGames', () => {
-    it('resolves when db.run succeeds', async () => {
-      mockRun.mockImplementationOnce((_sql: string, callback: (err: Error | null) => void) => {
-        callback(null);
-      });
+    it('resolves when prisma.games.deleteMany succeeds', async () => {
+      mockDeleteMany.mockResolvedValueOnce({ count: 0 });
       await expect(clearGames()).resolves.toBeUndefined();
-      expect(mockRun).toHaveBeenCalledWith('DELETE FROM games', expect.any(Function));
+      expect(mockDeleteMany).toHaveBeenCalledWith();
     });
 
-    it('rejects when db.run errors', async () => {
+    it('rejects when prisma.games.deleteMany throws', async () => {
       const error = new Error('DB error');
-      mockRun.mockImplementationOnce((_sql: string, callback: (err: Error | null) => void) => {
-        callback(error);
-      });
+      mockDeleteMany.mockRejectedValueOnce(error);
       await expect(clearGames()).rejects.toThrow('DB error');
     });
   });
 
   describe('getAllGames', () => {
-    it('resolves with rows from db.all', async () => {
+    it('resolves with rows from prisma.games.findMany', async () => {
       const games = [makeGame(), makeGame()];
-      mockAll.mockImplementationOnce((_sql: string, callback: (err: Error | null, rows: Game[]) => void) => {
-        callback(null, games);
-      });
+      mockFindMany.mockResolvedValueOnce(games);
+
       await expect(getAllGames()).resolves.toEqual(games);
-      expect(mockAll).toHaveBeenCalledWith(
-        'SELECT * FROM games ORDER BY platform, display_name',
-        expect.any(Function),
-      );
+      expect(mockFindMany).toHaveBeenCalledWith({
+        orderBy: { platform: 'asc', display_name: 'asc' },
+      });
     });
 
-    it('rejects when db.all errors', async () => {
+    it('rejects when prisma.games.findMany throws', async () => {
       const error = new Error('DB read error');
-      mockAll.mockImplementationOnce((_sql: string, callback: (err: Error | null, rows: Game[]) => void) => {
-        callback(error, []);
-      });
+      mockFindMany.mockRejectedValueOnce(error);
       await expect(getAllGames()).rejects.toThrow('DB read error');
     });
   });

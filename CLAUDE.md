@@ -43,7 +43,8 @@ Requires a `.env` file (see `.env.example`). The `GAMES_PATH` env var must point
 | `routes/games.ts` | `GET /api/games`, `GET /api/rescan`, `GET /api/download/:platform/:gameFolder` |
 | `scanner.ts` | Walks `/games/{Platform}/{game_folder}/`. Reads local files first, then IGDB (IGDB takes priority). Clears DB then re-inserts on each scan. |
 | `igdb.ts` | Twitch OAuth2 Client Credentials token management + IGDB v4 GraphQL search. Token cached with 60s early-expiry buffer. |
-| `db.ts` | SQLite at `/app/games.db`. Single `games` table. `insertGame` uses `INSERT OR REPLACE` keyed on `display_name`. |
+| `db.ts` | Database access layer via Prisma. Exposes `insertGame`, `updateGame`, `getGameByPath`, `deleteOrphanedGames`, `clearGames`, `getAllGames`. |
+| `lib/prisma.ts` | Prisma client singleton using `@prisma/adapter-better-sqlite3`. Exports `prisma` and `connectDB`. |
 
 ### Frontend (`frontend/src/`)
 
@@ -71,10 +72,11 @@ Requires a `.env` file (see `.env.example`). The `GAMES_PATH` env var must point
 ```
 IGDB_CLIENT_ID=       # Twitch app client ID
 IGDB_CLIENT_SECRET=   # Twitch app client secret
+DATABASE_URL=         # SQLite file URI, e.g. file:/app/games.db
 GAMES_PATH=           # Host path mounted as /games (docker-compose only)
 ```
 
-Backend reads `.env` from `/app/.env` (container path).
+Backend reads `.env` from `/app/.env` (container path). `DATABASE_URL` must be a `file:` URI — Prisma parses it, so do not pass a plain path.
 
 ### API Endpoints
 ```
@@ -117,8 +119,9 @@ Frontend uses `@/*` → `./src/*`. Always use this alias for imports inside `src
 
 ## Gotchas
 
-- **SQLite callbacks**: `sqlite3` does not return native Promises — wrap in `new Promise()` (see existing pattern in `db.ts`)
-- **Scanner clears DB on every rescan**: `clearGames()` is called before re-inserting, so any manual DB edits are wiped on rescan
+- **Prisma schema location**: schema is at `backend/prisma/schema.prisma`; generated client is at `backend/src/generated/prisma/` (gitignored — run `prisma generate` after cloning)
+- **Prisma migrations**: run `prisma migrate dev` from `backend/`; `prisma.config.ts` at the backend root configures the migrations path and datasource URL
+- **Scanner removes orphans, not all rows**: `deleteOrphanedGames()` removes games whose folder no longer exists on disk; `clearGames()` (full wipe) is only used if no valid paths are found
 - **IGDB failures are silent**: `igdb.ts` returns `null` on errors; the scanner falls back to local files gracefully
 - **Download endpoint uses no compression** (`zlib level 0`): intentional, avoids CPU overhead on NAS for already-compressed game files
 - **Frontend install**: use `npm install --legacy-peer-deps` due to React 19 peer dep conflicts

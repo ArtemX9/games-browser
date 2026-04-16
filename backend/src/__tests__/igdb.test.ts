@@ -3,12 +3,13 @@ import { faker } from '@faker-js/faker';
 
 import { IgdbGameData } from '../types';
 
-const mockAxiosPost = vi.hoisted(() => vi.fn());
+const mockFetch = vi.fn();
+vi.stubGlobal('fetch', mockFetch);
+vi.mock('dotenv/config', () => ({}));
 
-vi.mock('axios', () => ({ default: { post: mockAxiosPost } }));
-vi.mock('dotenv', () => ({ default: { config: vi.fn() } }));
+const TOKEN_RESPONSE = { access_token: 'test-token', expires_in: 3600 };
 
-const TOKEN_RESPONSE = { data: { access_token: 'test-token', expires_in: 3600 } };
+const makeResponse = (data: unknown) => ({ json: () => Promise.resolve(data) });
 
 const makeIgdbGame = () => ({
   id: faker.number.int(),
@@ -21,9 +22,9 @@ const makeIgdbGame = () => ({
 });
 
 const setupSearchMock = (gamesData: object[]) => {
-  mockAxiosPost.mockImplementation(async (url: string) => {
-    if (url.includes('twitch.tv')) return TOKEN_RESPONSE;
-    return { data: gamesData };
+  mockFetch.mockImplementation(async (url: string) => {
+    if (url.includes('twitch.tv')) return makeResponse(TOKEN_RESPONSE);
+    return makeResponse(gamesData);
   });
 };
 
@@ -31,7 +32,7 @@ describe('searchGame', () => {
   let searchGame: (q: string, platform: string) => Promise<IgdbGameData | null>;
 
   beforeEach(async () => {
-    mockAxiosPost.mockReset();
+    mockFetch.mockReset();
     vi.resetModules();
     process.env.IGDB_CLIENT_ID = 'test-client-id';
     process.env.IGDB_CLIENT_SECRET = 'test-client-secret';
@@ -73,7 +74,9 @@ describe('searchGame', () => {
   });
 
   it('returns null on IGDB API error', async () => {
-    mockAxiosPost.mockResolvedValueOnce(TOKEN_RESPONSE).mockRejectedValueOnce(new Error('Network error'));
+    mockFetch
+      .mockResolvedValueOnce(makeResponse(TOKEN_RESPONSE))
+      .mockRejectedValueOnce(new Error('Network error'));
     await expect(searchGame('Test Game', 'Win')).resolves.toBeNull();
   });
 

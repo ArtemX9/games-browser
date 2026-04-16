@@ -1,0 +1,25 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model games {
+  id               Int     @id @default(autoincrement())
+  display_name     String? @unique(map: "sqlite_autoindex_games_1")
+  thumbnail        String?
+  icon             String?
+  description      String?
+  platform         String?
+  game_folder      String?
+  release_date     String?
+  genres           String?
+  igdb_platforms   String?
+  manually_matched Boolean @default(false)
+
+  @@unique([game_folder, display_name])
+  @@unique([game_folder, platform])
+}

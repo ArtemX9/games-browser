@@ -1,18 +1,18 @@
-export interface Game {
+export type Game = {
   id: number;
-  display_name: string;
-  thumbnail: string;
-  icon: string;
-  description: string;
-  platform: string;
-  game_folder: string;
-  release_date: string;
-  genres: string;
-  igdb_platforms: string;
-  manually_matched: number;
+  display_name: string | null;
+  thumbnail: string | null;
+  icon: string | null;
+  description: string | null;
+  platform: string | null;
+  game_folder: string | null;
+  release_date: string | null;
+  genres: string | null;
+  igdb_platforms: string | null;
+  manually_matched: boolean;
 }
 
-export interface IgdbGameData {
+export type IgdbGameData = {
   name: string;
   description: string;
   thumbnail: string | null;

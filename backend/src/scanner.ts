@@ -1,9 +1,11 @@
 import fs from 'fs-extra';
 import path from 'path';
+import "dotenv/config";
+
 import { deleteOrphanedGames, getGameByPath, insertGame } from './db';
 import { searchGame } from './igdb';
 
-const GAMES_ROOT = '/games';
+const GAMES_ROOT = process.env.GAMES_PATH || '/games';
 
 export const scanGames = async () => {
     try {
@@ -58,16 +60,16 @@ export const scanGames = async () => {
             if (existing?.manually_matched) {
                 const icon = hasLocalFiles[1] ? localIcon : existing.icon;
                 if (icon !== existing.icon) {
-                    insertGame(
-                        existing.display_name,
-                        existing.thumbnail,
-                        icon,
-                        existing.description,
-                        platform,
-                        gameFolder,
-                        existing.release_date,
-                        existing.genres,
-                        existing.igdb_platforms
+                    await insertGame(
+                      existing.display_name || '',
+                      existing.thumbnail || '',
+                      icon || '',
+                      existing.description || '',
+                      platform,
+                      gameFolder,
+                      existing.release_date || '',
+                      existing.genres || '',
+                      existing.igdb_platforms || ''
                     );
                 }
                 console.log(`Preserved (manually matched): ${existing.display_name}`);
